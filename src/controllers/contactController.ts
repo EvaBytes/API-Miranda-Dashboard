@@ -1,56 +1,12 @@
 import express, { Request, Response } from "express";
 import { createMessage, deleteMessage, getAllMessages, getMessage, updateMessage } from "../services/contactServices";
 import { asyncHandler } from "../utils/asyncHandler";
-import { validateMessage } from '../validators/contactValidator';
 
 export const contactRouter = express.Router();
 
 /**
  * @swagger
- * components:
- *   schemas:
- *     Message:
- *       type: object
- *       required:
- *         - fullName
- *         - email
- *         - phone
- *         - subject
- *         - comment
- *         - status
- *       properties:
- *         photo:
- *           type: string
- *           description: URL of the profile photo
- *         date:
- *           type: string
- *           description: Date of the message
- *         messageId:
- *           type: string
- *           description: Unique ID of the message
- *         fullName:
- *           type: string
- *           description: Full name of the person
- *         email:
- *           type: string
- *           description: Email of the person
- *         phone:
- *           type: string
- *           description: Phone number of the person
- *         subject:
- *           type: string
- *           description: Subject of the message
- *         comment:
- *           type: string
- *           description: Content of the message
- *         status:
- *           type: string
- *           description: Status of the message
- */
-
-/**
- * @swagger
- * /api-dashboard/messages:
+ * /api/v1/contact:
  *   get:
  *     summary: Get all messages
  *     tags: [Messages]
@@ -71,7 +27,7 @@ contactRouter.get('/', asyncHandler(async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /api-dashboard/messages/{id}:
+ * /api/v1/contact/{id}:
  *   get:
  *     summary: Get message by ID
  *     tags: [Messages]
@@ -92,8 +48,8 @@ contactRouter.get('/', asyncHandler(async (req: Request, res: Response) => {
  *       404:
  *         description: Message not found
  */
-contactRouter.get('/:id', asyncHandler(async (req: Request, res: Response) => {
-    const message = await getMessage(req.params.id);
+contactRouter.get('/:messageId', asyncHandler(async (req: Request, res: Response) => {
+    const message = await getMessage(req.params.messageId);
     if (message) {
         res.status(200).json({ data: message });
     } else {
@@ -103,7 +59,7 @@ contactRouter.get('/:id', asyncHandler(async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /api-dashboard/messages:
+ * /api/v1/contact:
  *   post:
  *     summary: Create a new message
  *     tags: [Messages]
@@ -123,14 +79,14 @@ contactRouter.get('/:id', asyncHandler(async (req: Request, res: Response) => {
  *       400:
  *         description: Invalid input
  */
-contactRouter.post('/', validateMessage, asyncHandler(async (req: Request, res: Response) => {
+contactRouter.post('/', asyncHandler(async (req: Request, res: Response) => {
     const newMessage = await createMessage(req.body);
     res.status(201).json({ data: newMessage });
 }));
 
 /**
  * @swagger
- * /api-dashboard/messages/{id}:
+ * /api/v1/contact/{id}:
  *   patch:
  *     summary: Update message by ID
  *     tags: [Messages]
@@ -159,10 +115,10 @@ contactRouter.post('/', validateMessage, asyncHandler(async (req: Request, res: 
  *       404:
  *         description: Message not found
  */
-contactRouter.patch('/:id', validateMessage, asyncHandler(async (req: Request, res: Response) => {
-    const updatedMessage = await updateMessage(req.params.id, req.body);
+contactRouter.put('/:messageId', asyncHandler(async (req: Request, res: Response) => {
+    const updatedMessage = await updateMessage(req.params.messageId, req.body);
     if (updatedMessage) {
-        res.status(200).json({ data: `Message with _id [${req.params.id}] updated!` });
+        res.status(200).json({ data: `Message with messageId [${req.params.messageId}] updated!` });
     } else {
         res.status(404).json({ error: 'Message not found' });
     }
@@ -170,7 +126,7 @@ contactRouter.patch('/:id', validateMessage, asyncHandler(async (req: Request, r
 
 /**
  * @swagger
- * /api-dashboard/messages/{id}:
+ * /api/v1/contact/{id}:
  *   delete:
  *     summary: Delete message by ID
  *     tags: [Messages]
@@ -187,10 +143,10 @@ contactRouter.patch('/:id', validateMessage, asyncHandler(async (req: Request, r
  *       404:
  *         description: Message not found
  */
-contactRouter.delete('/:id', asyncHandler(async (req: Request, res: Response) => {
-    const deletedMessage = await deleteMessage(req.params.id);
+contactRouter.delete('/:messageId', asyncHandler(async (req: Request, res: Response) => {
+    const deletedMessage = await deleteMessage(req.params.messageId);
     if (deletedMessage) {
-        res.status(200).json({ data: `Message with _id [${req.params.id}] deleted!` });
+        res.status(200).json({ data: `Message with messageId [${req.params.messageId}] deleted!` });
     } else {
         res.status(404).json({ error: 'Message not found' });
     }

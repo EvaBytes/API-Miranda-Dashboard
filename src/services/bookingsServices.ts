@@ -1,4 +1,4 @@
-import { Booking } from "../interfaces/bookingsInterface";
+import { Booking} from "../interfaces/bookingsInterface";
 import bookingData from "../data/bookings.json";
 
 export class BookingsService {

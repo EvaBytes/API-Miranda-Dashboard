@@ -6,6 +6,6 @@ export interface Message {
     email: string;
     phone: string;
     subject: string;
-    content: string;
+    comment: string;
     status: "read" | "unread";
   }

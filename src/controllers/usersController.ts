@@ -1,55 +1,12 @@
 import express, { Request, Response } from "express";
 import { getAllUsers, getUser, createUser, updateUser, deleteUser } from "../services/usersServices";
 import { asyncHandler } from "../utils/asyncHandler";
-import { validateUser } from '../validators/usersValidator';
 
 export const userRouter = express.Router();
 
 /**
  * @swagger
- * components:
- *   schemas:
- *     User:
- *       type: object
- *       required:
- *         - photo
- *         - name
- *         - employeeId
- *         - email
- *         - startDate
- *         - description
- *         - contact
- *         - status
- *       properties:
- *         photo:
- *           type: string
- *           description: URL of the profile photo
- *         name:
- *           type: string
- *           description: Name of the user
- *         employeeId:
- *           type: string
- *           description: Employee ID
- *         email:
- *           type: string
- *           description: Email of the user
- *         startDate:
- *           type: string
- *           description: Start date of the user
- *         description:
- *           type: string
- *           description: Description of the user
- *         contact:
- *           type: string
- *           description: Contact number of the user
- *         status:
- *           type: string
- *           description: Status of the user
- */
-
-/**
- * @swagger
- * /api-dashboard/users:
+ * /api/v1/users:
  *   get:
  *     summary: Get all users
  *     tags: [Users]
@@ -70,29 +27,29 @@ userRouter.get('/', asyncHandler(async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /api-dashboard/users/{id}:
+ * /api/v1/users/{employeeId}:
  *   get:
- *     summary: Get user by ID
+ *     summary: Get user by Employee ID
  *     tags: [Users]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: employeeId
  *         schema:
  *           type: string
  *         required: true
- *         description: User ID
+ *         description: Employee ID
  *     responses:
  *       200:
  *         description: User data
  *         content:
- *           application/json
+ *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
  *       404:
  *         description: User not found
  */
-userRouter.get('/:id', asyncHandler(async (req: Request, res: Response) => {
-    const user = await getUser(req.params.id);
+userRouter.get('/:employeeId', asyncHandler(async (req: Request, res: Response) => {
+    const user = await getUser(req.params.employeeId);
     if (user) {
         res.status(200).json({ data: user });
     } else {
@@ -102,55 +59,55 @@ userRouter.get('/:id', asyncHandler(async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /api-dashboard/users:
+ * /api/v1/users:
  *   post:
  *     summary: Create a new user
  *     tags: [Users]
  *     requestBody:
  *       required: true
  *       content:
- *         application/json
+ *         application/json:
  *           schema:
  *             $ref: '#/components/schemas/User'
  *     responses:
  *       201:
  *         description: User created successfully
  *         content:
- *           application/json
+ *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
  *       400:
  *         description: Invalid input
  */
-userRouter.post('/', validateUser, asyncHandler(async (req: Request, res: Response) => {
+userRouter.post('/', asyncHandler(async (req: Request, res: Response) => {
     const newUser = await createUser(req.body);
     res.status(201).json({ data: newUser });
 }));
 
 /**
  * @swagger
- * /api-dashboard/users/{id}:
- *   patch:
- *     summary: Update user by ID
+ * /api/v1/users/{employeeId}:
+ *   put:
+ *     summary: Replace user data by Employee ID
  *     tags: [Users]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: employeeId
  *         schema:
  *           type: string
  *         required: true
- *         description: User ID
+ *         description: Employee ID
  *     requestBody:
  *       required: true
  *       content:
- *         application/json
+ *         application/json:
  *           schema:
  *             $ref: '#/components/schemas/User'
  *     responses:
  *       200:
- *         description: User updated successfully
+ *         description: User replaced successfully
  *         content:
- *           application/json
+ *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
  *       400:
@@ -158,38 +115,38 @@ userRouter.post('/', validateUser, asyncHandler(async (req: Request, res: Respon
  *       404:
  *         description: User not found
  */
-userRouter.patch('/:id', validateUser, asyncHandler(async (req: Request, res: Response) => {
-    const updatedUser = await updateUser(req.params.id, req.body);
+userRouter.put("/:employeeId", asyncHandler(async (req: Request, res: Response) => {
+    const updatedUser = await updateUser(req.params.employeeId, req.body);
     if (updatedUser) {
-        res.status(200).json({ data: `User with _id [${req.params.id}] updated!` });
+        res.status(200).json({ data: updatedUser });
     } else {
-        res.status(404).json({ error: 'User not found' });
+        res.status(404).json({ error: "User not found" });
     }
 }));
 
 /**
  * @swagger
- * /api-dashboard/users/{id}:
+ * /api/v1/users/{employeeId}:
  *   delete:
- *     summary: Delete user by ID
+ *     summary: Delete user by Employee ID
  *     tags: [Users]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: employeeId
  *         schema:
  *           type: string
  *         required: true
- *         description: User ID
+ *         description: Employee ID
  *     responses:
  *       200:
  *         description: User deleted successfully
  *       404:
  *         description: User not found
  */
-userRouter.delete('/:id', asyncHandler(async (req: Request, res: Response) => {
-    const deletedUser = await deleteUser(req.params.id);
+userRouter.delete('/:employeeId', asyncHandler(async (req: Request, res: Response) => {
+    const deletedUser = await deleteUser(req.params.employeeId);
     if (deletedUser) {
-        res.status(200).json({ data: `User with _id [${req.params.id}] deleted!` });
+        res.status(200).json({ data: `User with employeeId [${req.params.employeeId}] deleted!` });
     } else {
         res.status(404).json({ error: 'User not found' });
     }
