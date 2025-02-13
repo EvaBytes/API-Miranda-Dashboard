@@ -1,4 +1,4 @@
-import { Booking} from "../interfaces/bookingsInterface";
+import { Booking } from "../interfaces/bookingsInterface";
 import bookingData from "../data/bookings.json";
 
 export class BookingsService {
@@ -9,7 +9,7 @@ export class BookingsService {
     }
 
     fetchById(reservationNumber: string): Booking | undefined {
-        return this.bookings.find((booking) => booking.roomNumber === reservationNumber.toString());
+        return this.bookings.find((booking) => booking.guest.reservationNumber === reservationNumber);
     }
 
     create(booking: Booking): Booking {
@@ -19,27 +19,27 @@ export class BookingsService {
     }
 
     update(reservationNumber: string, booking: Booking): Booking | null {
-        const bookingToUpdate = this.bookings.find((booking) => booking.roomNumber === reservationNumber.toString());
+        const bookingToUpdate = this.bookings.find((booking) => booking.guest.reservationNumber === reservationNumber);
         if (bookingToUpdate) {
             const updatedBooking = { ...bookingToUpdate, ...booking };
-            this.bookings = this.bookings.map((b) => (b.roomNumber === reservationNumber.toString() ? updatedBooking : b));
+            this.bookings = this.bookings.map((b) => (b.guest.reservationNumber === reservationNumber ? updatedBooking : b));
             return updatedBooking;
         }
         return null;
     }
 
     delete(reservationNumber: string): boolean {
-        const bookingToDelete = this.bookings.find((booking) => booking.roomNumber === reservationNumber.toString());
+        const bookingToDelete = this.bookings.find((booking) => booking.guest.reservationNumber === reservationNumber);
         if (bookingToDelete) {
-            this.bookings = this.bookings.filter((booking) => booking.roomNumber !== reservationNumber.toString());
+            this.bookings = this.bookings.filter((booking) => booking.guest.reservationNumber !== reservationNumber);
             return true;
         }
         return false;
     }
 }
 
-export const getAllBookings = () => {const service = new BookingsService();return service.fetchAll();};
-export const getBooking = (reservationNumber: string) => {const service = new BookingsService();return service.fetchById(reservationNumber);};
-export const createBooking = (booking: Booking) => {const service = new BookingsService();return service.create(booking);};
-export const updateBooking = (reservationNumber: string, booking: Booking) => {const service = new BookingsService();return service.update(reservationNumber, booking);};
-export const deleteBooking = (reservationNumber: string) => {const service = new BookingsService();return service.delete(reservationNumber);};
+export const getAllBookings = () => { const service = new BookingsService(); return service.fetchAll(); };
+export const getBooking = (reservationNumber: string) => { const service = new BookingsService(); return service.fetchById(reservationNumber); };
+export const createBooking = (booking: Booking) => { const service = new BookingsService(); return service.create(booking); };
+export const updateBooking = (reservationNumber: string, booking: Booking) => { const service = new BookingsService(); return service.update(reservationNumber, booking); };
+export const deleteBooking = (reservationNumber: string) => { const service = new BookingsService(); return service.delete(reservationNumber); };

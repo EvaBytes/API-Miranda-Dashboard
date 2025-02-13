@@ -3,13 +3,56 @@ import { createMessage, deleteMessage, getAllMessages, getMessage, updateMessage
 import { asyncHandler } from "../utils/asyncHandler";
 
 export const contactRouter = express.Router();
+/**
+ * @swagger
+ * tags:
+ *   - name: Contact
+ *     description: Contacts Management
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Contact:
+ *       type: object
+ *       properties:
+ *         photo:
+ *           type: string
+ *           example: "/Profile2.png"
+ *         date:
+ *           type: string
+ *           example: "Nov 27th 2020 12:00 AM"
+ *         messageId:
+ *           type: string
+ *           example: "0011"
+ *         fullName:
+ *           type: string
+ *           example: "Lindon Lyal"
+ *         email:
+ *           type: string
+ *           example: "llyala@xrea.com"
+ *         phone:
+ *           type: string
+ *           example: "584-238-9970"
+ *         subject:
+ *           type: string
+ *           example: "Sharable intangible service-desk"
+ *         comment:
+ *           type: string
+ *           example: "Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla. Nunc purus."
+ *         status:
+ *           type: string
+ *           example: "read"
+ */
+
 
 /**
  * @swagger
  * /api/v1/contact:
  *   get:
- *     summary: Get all messages
- *     tags: [Messages]
+ *     summary: Get all contacts
+ *     tags: [Contact]
  *     responses:
  *       200:
  *         description: List of all messages
@@ -18,7 +61,7 @@ export const contactRouter = express.Router();
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/Message'
+ *                 $ref: '#/components/schemas/Contact'
  */
 contactRouter.get('/', asyncHandler(async (req: Request, res: Response) => {
     const messages = await getAllMessages();
@@ -27,22 +70,22 @@ contactRouter.get('/', asyncHandler(async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /api/v1/contact/{id}:
+ * /api/v1/contact/{messageId}:
  *   get:
- *     summary: Get message by ID
- *     tags: [Messages]
+ *     summary: Get message by messageId
+ *     tags: [Contact]
  *     parameters:
  *       - in: path
  *         name: id
  *         schema:
  *           type: string
  *         required: true
- *         description: Message ID
+ *         description: MessageId
  *     responses:
  *       200:
  *         description: Message data
  *         content:
- *           application/json
+ *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Message'
  *       404:
@@ -50,11 +93,8 @@ contactRouter.get('/', asyncHandler(async (req: Request, res: Response) => {
  */
 contactRouter.get('/:messageId', asyncHandler(async (req: Request, res: Response) => {
     const message = await getMessage(req.params.messageId);
-    if (message) {
-        res.status(200).json({ data: message });
-    } else {
-        res.status(404).json({ error: 'Message not found' });
-    }
+    if (message) {res.status(200).json({ data: message });
+    } else {res.status(404).json({ error: 'Message not found' });}
 }));
 
 /**
@@ -62,18 +102,18 @@ contactRouter.get('/:messageId', asyncHandler(async (req: Request, res: Response
  * /api/v1/contact:
  *   post:
  *     summary: Create a new message
- *     tags: [Messages]
+ *     tags: [Contact]
  *     requestBody:
  *       required: true
  *       content:
- *         application/json
+ *         application/json:
  *           schema:
  *             $ref: '#/components/schemas/Message'
  *     responses:
  *       201:
  *         description: Message created successfully
  *         content:
- *           application/json
+ *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Message'
  *       400:
@@ -86,28 +126,28 @@ contactRouter.post('/', asyncHandler(async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /api/v1/contact/{id}:
- *   patch:
- *     summary: Update message by ID
- *     tags: [Messages]
+ * /api/v1/contact/{messageId}:
+ *   put:
+ *     summary: Update message by messageId
+ *     tags: [Contact]
  *     parameters:
  *       - in: path
  *         name: id
  *         schema:
  *           type: string
  *         required: true
- *         description: Message ID
+ *         description: MessageId
  *     requestBody:
  *       required: true
  *       content:
- *         application/json
+ *         application/json:
  *           schema:
  *             $ref: '#/components/schemas/Message'
  *     responses:
  *       200:
  *         description: Message updated successfully
  *         content:
- *           application/json
+ *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Message'
  *       400:
@@ -117,26 +157,23 @@ contactRouter.post('/', asyncHandler(async (req: Request, res: Response) => {
  */
 contactRouter.put('/:messageId', asyncHandler(async (req: Request, res: Response) => {
     const updatedMessage = await updateMessage(req.params.messageId, req.body);
-    if (updatedMessage) {
-        res.status(200).json({ data: `Message with messageId [${req.params.messageId}] updated!` });
-    } else {
-        res.status(404).json({ error: 'Message not found' });
-    }
+    if (updatedMessage) {res.status(200).json({ data: `Message with messageId [${req.params.messageId}] updated!` });
+    } else {res.status(404).json({ error: 'Message not found' });}
 }));
 
 /**
  * @swagger
- * /api/v1/contact/{id}:
+ * /api/v1/contact/{messageId}:
  *   delete:
- *     summary: Delete message by ID
- *     tags: [Messages]
+ *     summary: Delete message by messageId
+ *     tags: [Contact]
  *     parameters:
  *       - in: path
  *         name: id
  *         schema:
  *           type: string
  *         required: true
- *         description: Message ID
+ *         description: MessageId
  *     responses:
  *       200:
  *         description: Message deleted successfully
@@ -145,9 +182,6 @@ contactRouter.put('/:messageId', asyncHandler(async (req: Request, res: Response
  */
 contactRouter.delete('/:messageId', asyncHandler(async (req: Request, res: Response) => {
     const deletedMessage = await deleteMessage(req.params.messageId);
-    if (deletedMessage) {
-        res.status(200).json({ data: `Message with messageId [${req.params.messageId}] deleted!` });
-    } else {
-        res.status(404).json({ error: 'Message not found' });
-    }
+    if (deletedMessage) {res.status(200).json({ data: `Message with messageId [${req.params.messageId}] deleted!` });
+    } else {res.status(404).json({ error: 'Message not found' });}
 }));

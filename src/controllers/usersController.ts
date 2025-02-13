@@ -6,6 +6,49 @@ export const userRouter = express.Router();
 
 /**
  * @swagger
+ * tags:
+ *   - name: Users
+ *     description: Users Management
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     User:
+ *       type: object
+ *       properties:
+ *         photo:
+ *           type: string
+ *           example: "/Profile2.png"
+ *         name:
+ *           type: string
+ *           example: "Shaun Jaycox"
+ *         employeeId:
+ *           type: string
+ *           example: "32"
+ *         email:
+ *           type: string
+ *           example: "user@testing.com"
+ *         password:
+ *           type: string
+ *           example: "123456"
+ *         startDate:
+ *           type: string
+ *           example: "13/11/2024"
+ *         description:
+ *           type: string
+ *           example: "Front Desk Receptionist."
+ *         contact:
+ *           type: string
+ *           example: "733-960-2795"
+ *         status:
+ *           type: string
+ *           example: "ACTIVE"
+ */
+
+/**
+ * @swagger
  * /api/v1/users:
  *   get:
  *     summary: Get all users
@@ -50,8 +93,7 @@ userRouter.get('/', asyncHandler(async (req: Request, res: Response) => {
  */
 userRouter.get('/:employeeId', asyncHandler(async (req: Request, res: Response) => {
     const user = await getUser(req.params.employeeId);
-    if (user) {
-        res.status(200).json({ data: user });
+    if (user) {res.status(200).json({ data: user });
     } else {
         res.status(404).json({ error: 'User not found' });
     }
@@ -117,11 +159,8 @@ userRouter.post('/', asyncHandler(async (req: Request, res: Response) => {
  */
 userRouter.put("/:employeeId", asyncHandler(async (req: Request, res: Response) => {
     const updatedUser = await updateUser(req.params.employeeId, req.body);
-    if (updatedUser) {
-        res.status(200).json({ data: updatedUser });
-    } else {
-        res.status(404).json({ error: "User not found" });
-    }
+    if (updatedUser) {res.status(200).json({ data: updatedUser });
+    } else {res.status(404).json({ error: "User not found" });}
 }));
 
 /**
@@ -145,9 +184,6 @@ userRouter.put("/:employeeId", asyncHandler(async (req: Request, res: Response) 
  */
 userRouter.delete('/:employeeId', asyncHandler(async (req: Request, res: Response) => {
     const deletedUser = await deleteUser(req.params.employeeId);
-    if (deletedUser) {
-        res.status(200).json({ data: `User with employeeId [${req.params.employeeId}] deleted!` });
-    } else {
-        res.status(404).json({ error: 'User not found' });
-    }
+    if (deletedUser) {res.status(200).json({ data: `User with employeeId [${req.params.employeeId}] deleted!` });
+    } else {res.status(404).json({ error: 'User not found' });}
 }));

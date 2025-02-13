@@ -6,6 +6,64 @@ export const roomRouter = express.Router();
 
 /**
  * @swagger
+ * tags:
+ *   - name: Rooms
+ *     description: Rooms Management
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Room:
+ *       type: object
+ *       properties:
+ *         roomPhoto:
+ *           type: string
+ *           example: "/LUXURYcutre.jpg"
+ *         roomNumber:
+ *           type: string
+ *           example: "143"
+ *         roomType:
+ *           type: string
+ *           example: "Double Bed Superior"
+ *         facilities:
+ *           type: string
+ *           example: "Air conditioner, WiFi, Breakfast, Shower, Towels"
+ *         rate:
+ *           type: string
+ *           example: "345$"
+ *         offerPrice:
+ *           type: string
+ *           example: "350$"
+ *         status:
+ *           type: string
+ *           example: "Available"
+ *         guest:
+ *           type: object
+ *           properties:
+ *             fullName:
+ *               type: string
+ *               example: "Vincent Gorelli"
+ *             reservationNumber:
+ *               type: string
+ *               example: "#987654321"
+ *             image:
+ *               type: string
+ *               example: "/Profile2.png"
+ *         orderDate:
+ *           type: string
+ *           example: "2024-04-23T12:50:00Z"
+ *         checkIn:
+ *           type: string
+ *           example: "2024-08-02T18:50:00Z"
+ *         checkOut:
+ *           type: string
+ *           example: "2024-12-15T23:43:00Z"
+ */
+
+/**
+ * @swagger
  * /api/v1/rooms:
  *   get:
  *     summary: Get all rooms
@@ -27,9 +85,9 @@ roomRouter.get('/', asyncHandler(async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /api/v1/rooms/{id}:
+ * /api/v1/rooms/{roomNumber}:
  *   get:
- *     summary: Get room by ID
+ *     summary: Get room by roomNumber
  *     tags: [Rooms]
  *     parameters:
  *       - in: path
@@ -37,12 +95,12 @@ roomRouter.get('/', asyncHandler(async (req: Request, res: Response) => {
  *         schema:
  *           type: string
  *         required: true
- *         description: Room ID
+ *         description: Room Number
  *     responses:
  *       200:
  *         description: Room data
  *         content:
- *           application/json
+ *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Room'
  *       404:
@@ -52,9 +110,7 @@ roomRouter.get('/:roomNumber', asyncHandler(async (req: Request, res: Response) 
     const room = await getRoom(req.params.roomNumber);
     if (room) {
         res.status(200).json({ data: room });
-    } else {
-        res.status(404).json({ error: 'Room not found' });
-    }
+    } else {res.status(404).json({ error: 'Room not found' });}
 }));
 
 /**
@@ -66,14 +122,14 @@ roomRouter.get('/:roomNumber', asyncHandler(async (req: Request, res: Response) 
  *     requestBody:
  *       required: true
  *       content:
- *         application/json
+ *         application/json:
  *           schema:
  *             $ref: '#/components/schemas/Room'
  *     responses:
  *       201:
  *         description: Room created successfully
  *         content:
- *           application/json
+ *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Room'
  *       400:
@@ -86,9 +142,9 @@ roomRouter.post('/roomNumber', asyncHandler(async (req: Request, res: Response) 
 
 /**
  * @swagger
- * /api/v1/rooms/{id}:
- *   patch:
- *     summary: Update room by ID
+ * /api/v1/rooms/{roomNumber}:
+ *   put:
+ *     summary: Update room by roomNumber
  *     tags: [Rooms]
  *     parameters:
  *       - in: path
@@ -96,18 +152,18 @@ roomRouter.post('/roomNumber', asyncHandler(async (req: Request, res: Response) 
  *         schema:
  *           type: string
  *         required: true
- *         description: Room ID
+ *         description: Room Number
  *     requestBody:
  *       required: true
  *       content:
- *         application/json
+ *         application/json:
  *           schema:
  *             $ref: '#/components/schemas/Room'
  *     responses:
  *       200:
  *         description: Room updated successfully
  *         content:
- *           application/json
+ *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Room'
  *       400:
@@ -119,16 +175,14 @@ roomRouter.put('/:roomNumber', asyncHandler(async (req: Request, res: Response) 
     const updatedRoom = await updateRoom(req.params.roomNumber, req.body);
     if (updatedRoom) {
         res.status(200).json({ data: `Room with roomNumber [${req.params.roomNumber}] updated!` });
-    } else {
-        res.status(404).json({ error: 'Room not found' });
-    }
+    } else {res.status(404).json({ error: 'Room not found' });}
 }));
 
 /**
  * @swagger
- * /api/v1/rooms/{id}:
+ * /api/v1/rooms/{roomNumber}:
  *   delete:
- *     summary: Delete room by ID
+ *     summary: Delete room by Room Number
  *     tags: [Rooms]
  *     parameters:
  *       - in: path
@@ -145,8 +199,7 @@ roomRouter.put('/:roomNumber', asyncHandler(async (req: Request, res: Response) 
  */
 roomRouter.delete('/:roomNumber', asyncHandler(async (req: Request, res: Response) => {
     const deletedRoom = await deleteRoom(req.params.roomNumber);
-    if (deletedRoom) {
-        res.status(200).json({ data: `Room with roomNumber [${req.params.roomNumber}] deleted!` });
+    if (deletedRoom) {res.status(200).json({ data: `Room with roomNumber [${req.params.roomNumber}] deleted!` });
     } else {
         res.status(404).json({ error: 'Room not found' });
     }
