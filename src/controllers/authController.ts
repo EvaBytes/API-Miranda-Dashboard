@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import { AuthService, AuthError } from '../services/authServices';
 import { asyncHandler } from '../utils/asyncHandler';
-import { AuthValidator } from '../validators/authValidator'; 
+import { AuthValidator } from '../validators/authValidator';
 
 export const authRouter = express.Router();
 
@@ -38,6 +38,17 @@ export const authRouter = express.Router();
  *                 token:
  *                   type: string
  *                   example: "eyJhbGciOiJIUzI1..."
+ *       400:
+ *         description: Validation errors
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                     type: string
  *       401:
  *         description: Invalid credentials
  *         content:
@@ -54,18 +65,13 @@ export const authRouter = express.Router();
 authRouter.post('/', asyncHandler(async (req: Request, res: Response) => {
     const { username, password } = req.body;
 
-    const { valid, errors } = AuthValidator.validate({ username, password });
-
-    if (!valid) {return res.status(400).json({ errors });}
-
+    const validation = AuthValidator.validate({ username, password });
+    if (!validation.valid) {return res.status(400).json({ errors: validation.errors });}
     try {
         const token = await AuthService.authenticate(username, password);
         res.json({ token });
-    } catch (error) {
-        if (error instanceof AuthError) {
-            res.status(401).json({ error: error.message });
-        } else {
-            res.status(500).json({ error: 'Internal server error' });
-        }
+    } catch (error) {if (error instanceof AuthError) {return res.status(401).json({ error: error.message });
+}
+        res.status(500).json({ error: 'Internal server error' });
     }
 }));

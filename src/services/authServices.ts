@@ -1,18 +1,35 @@
+import fs from 'fs';
+import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import path from 'path';
+import dotenv from 'dotenv';
 
-const SECRET_KEY = process.env.JWT_SECRET || "secret-key";
-const USER = {
-    username: "user@testing.com",
-    password: "123456"
-};
+dotenv.config();
+
+const SECRET_KEY = process.env.JWT_SECRET || 'NoWayJose123';  
+const SALT_ROUNDS = parseInt(process.env.BCRYPT_SALT_ROUNDS || '12');  
+
+const usersPath = path.resolve(__dirname, '../data/Users.json');
+const users = JSON.parse(fs.readFileSync(usersPath, 'utf-8'));  
+
+export async function hashPassword(password: string): Promise<string> {
+    return bcrypt.hash(password, SALT_ROUNDS); 
+}
 
 export class AuthService {
     static async authenticate(username: string, password: string): Promise<string> {
-        if (username === USER.username && password === USER.password) {
-            return jwt.sign({ username: USER.username }, SECRET_KEY, { expiresIn: '1h' });
-        } else {
+        const user = users.find((user: { email: string }) => user.email === username);
+
+        if (!user) {
             throw new AuthError('Invalid credentials');
         }
+
+        const passwordMatch = await bcrypt.compare(password, user.password);
+        if (!passwordMatch) {
+            throw new AuthError('Invalid credentials');
+        }
+
+        return jwt.sign({ username: user.email, name: user.name }, SECRET_KEY, { expiresIn: '1h' });
     }
 }
 

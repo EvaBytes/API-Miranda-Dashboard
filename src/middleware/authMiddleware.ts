@@ -1,23 +1,26 @@
-import { Request, Response} from "express";
-import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
+import { Request, Response, NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
 
 dotenv.config();
 
-const SECRET_KEY = process.env.SECRET_KEY || 'default_secret_key';
+const SECRET_KEY = process.env.JWT_SECRET || 'NoWayJose123';
 
-export const login = (req: Request, res: Response) => {
-    const { email, password } = req.body;
+export interface AuthenticatedRequest extends Request {user?: any;}
 
-    if (!email || !password) {
-        res.status(400).send({ error: 'Email and password are required' });
-        return;
+export const verifyJWT = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
+    const token = req.header('Authorization')?.split(' ')[1]; 
+
+    if (!token) {
+        res.status(401).json({ error: 'Access denied. No token provided.' });
+        return; 
     }
 
-    if (email === 'user@testing.com' && password === '123456') {
-        const token = jwt.sign({ email }, SECRET_KEY, { expiresIn: '1h' });
-        res.status(200).send({ token });
-    } else {
-        res.status(401).send({ error: 'Invalid credentials' });
+    try {
+        const decoded = jwt.verify(token, SECRET_KEY);
+        req.user = decoded; 
+        return next(); 
+    } catch (err) {res.status(401).json({ error: 'Invalid token' });
+        return; 
     }
 };
