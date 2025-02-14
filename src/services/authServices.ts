@@ -6,7 +6,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const SECRET_KEY = process.env.JWT_SECRET || 'NoWayJose123';  
+const SECRET_KEY = process.env.JWT_SECRET || '123456';  
 const SALT_ROUNDS = parseInt(process.env.BCRYPT_SALT_ROUNDS || '12');  
 
 const usersPath = path.resolve(__dirname, '../data/Users.json');
@@ -21,10 +21,11 @@ export class AuthService {
         const user = users.find((user: { email: string }) => user.email === username);
 
         if (!user) {
-            throw new AuthError('Invalid credentials');
+            throw new AuthError('User not found');
         }
-
+        console.log(password,user.password)
         const passwordMatch = await bcrypt.compare(password, user.password);
+        console.log(await hashPassword(password))
         if (!passwordMatch) {
             throw new AuthError('Invalid credentials');
         }

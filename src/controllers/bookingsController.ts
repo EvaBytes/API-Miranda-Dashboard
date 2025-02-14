@@ -1,17 +1,16 @@
 import express, { Request, Response } from "express";
-import { getAllBookings, getBooking, createBooking, updateBooking, deleteBooking } from "../services/bookingsServices";
+import {getAllBookings,getBooking,createBooking,updateBooking,deleteBooking} from "../services/bookingsServices";
 import { asyncHandler } from "../utils/asyncHandler";
 import { BookingValidator } from "../validators/bookingsValidator";
 
 export const bookingRouter = express.Router();
 const validator = new BookingValidator();
 
-
 /**
  * @swagger
  * tags:
  *   - name: Bookings
- *     description: Bookings Management 
+ *     description: Bookings Management
  */
 
 /**
@@ -78,10 +77,13 @@ const validator = new BookingValidator();
  *               items:
  *                 $ref: '#/components/schemas/Booking'
  */
-bookingRouter.get('/', asyncHandler(async (req: Request, res: Response) => {
+bookingRouter.get(
+  "/",
+  asyncHandler(async (req: Request, res: Response) => {
     const bookings = await getAllBookings();
     res.status(200).json({ data: bookings });
-}));
+  })
+);
 
 /**
  * @swagger
@@ -106,18 +108,21 @@ bookingRouter.get('/', asyncHandler(async (req: Request, res: Response) => {
  *       404:
  *         description: Booking not found
  */
-bookingRouter.get('/:reservationNumber', asyncHandler(async (req: Request, res: Response) => {
+bookingRouter.get(
+  "/:reservationNumber",
+  asyncHandler(async (req: Request, res: Response) => {
     const reservationNumber = req.params.reservationNumber;
-    console.log('Reservation Number received:', reservationNumber);  // IS IT WORKING?!
+    console.log("Reservation Number received:", reservationNumber); // IS IT WORKING?!
 
     const booking = await getBooking(reservationNumber);
 
-    if (booking) {res.status(200).json({ data: booking });
+    if (booking) {
+      res.status(200).json({ data: booking });
     } else {
-        res.status(404).json({ error: 'Booking not found' });
+      res.status(404).json({ error: "Booking not found" });
     }
-}));
-
+  })
+);
 
 /**
  * @swagger
@@ -141,14 +146,19 @@ bookingRouter.get('/:reservationNumber', asyncHandler(async (req: Request, res: 
  *       400:
  *         description: Invalid input
  */
-bookingRouter.post("/", asyncHandler(async (req: Request, res: Response) => {
+bookingRouter.post(
+  "/",
+  asyncHandler(async (req: Request, res: Response) => {
     const validation = validator.validate(req.body);
-    
-    if (!validation.valid) {return res.status(400).json({ errors: validation.errors });}
+
+    if (!validation.valid) {
+      return res.status(400).json({ errors: validation.errors });
+    }
 
     const newBooking = await createBooking(req.body);
     res.status(201).json({ data: newBooking });
-}));
+  })
+);
 
 /**
  * @swagger
@@ -181,13 +191,24 @@ bookingRouter.post("/", asyncHandler(async (req: Request, res: Response) => {
  *       404:
  *         description: Booking not found
  */
-bookingRouter.put('/:reservationNumber', asyncHandler(async (req: Request, res: Response) => {
-    const updatedBooking = await updateBooking(req.params.reservationNumber, req.body);
-    if (updatedBooking) {res.status(200).json({ data: `Booking with reservationNumber [${req.params.reservationNumber}] updated!` });
+bookingRouter.put(
+  "/:reservationNumber",
+  asyncHandler(async (req: Request, res: Response) => {
+    const updatedBooking = await updateBooking(
+      req.params.reservationNumber,
+      req.body
+    );
+    if (updatedBooking) {
+      res
+        .status(201)
+        .json({
+          data: `Booking with reservationNumber [${req.params.reservationNumber}] updated!`,
+        });
     } else {
-        res.status(404).json({ error: 'Booking not found' });
+      res.status(404).json({ error: "Booking not found" });
     }
-}));
+  })
+);
 
 /**
  * @swagger
@@ -208,11 +229,18 @@ bookingRouter.put('/:reservationNumber', asyncHandler(async (req: Request, res: 
  *       404:
  *         description: Booking not found
  */
-bookingRouter.delete('/:reservationNumber', asyncHandler(async (req: Request, res: Response) => {
+bookingRouter.delete(
+  "/:reservationNumber",
+  asyncHandler(async (req: Request, res: Response) => {
     const deletedBooking = await deleteBooking(req.params.reservationNumber);
-    if (deletedBooking) {res.status(200).json({ data: `Booking with reservationNumber [${req.params.reservationNumber}] deleted!` });
+    if (deletedBooking) {
+      res
+        .status(204)
+        .json({
+          data: `Booking with reservationNumber [${req.params.reservationNumber}] deleted!`,
+        });
     } else {
-        res.status(404).json({ error: 'Booking not found' });
+      res.status(404).json({ error: "Booking not found" });
     }
-}));
-
+  })
+);

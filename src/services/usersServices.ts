@@ -10,7 +10,7 @@ export class UsersService {
     }
 
     fetchById(employeeId: string): UserInterface | undefined {
-        return this.users.find((user) => user.employeeId === employeeId.toString());
+        return this.users.find((user) => user.employeeId === employeeId);
     }
 
     create(user: UserInterface): UserInterface {
@@ -20,19 +20,19 @@ export class UsersService {
     }
 
     update(employeeId: string, user: UserInterface): UserInterface | null {
-        const userToUpdate = this.users.find((user) => user.employeeId === employeeId.toString());
+        const userToUpdate = this.users.find((user) => user.employeeId === employeeId);
         if (userToUpdate) {
             const updatedUser = { ...userToUpdate, ...user };
-            this.users = this.users.map((u) => (u.employeeId === employeeId.toString() ? updatedUser : u));
+            this.users = this.users.map((u) => (u.employeeId === employeeId ? updatedUser : u));
             return updatedUser;
         }
         return null;
     }
 
     delete(employeeId: string): boolean {
-        const userToDelete = this.users.find((user) => user.employeeId === employeeId.toString());
+        const userToDelete = this.users.find((user) => user.employeeId === employeeId);
         if (userToDelete) {
-            this.users = this.users.filter((user) => user.employeeId !== employeeId.toString());
+            this.users = this.users.filter((user) => user.employeeId !== employeeId);
             return true;
         }
         return false;

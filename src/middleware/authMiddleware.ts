@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const SECRET_KEY = process.env.JWT_SECRET || 'NoWayJose123';
+const SECRET_KEY = process.env.JWT_SECRET || '123456';
 
 export interface AuthenticatedRequest extends Request {user?: any;}
 
