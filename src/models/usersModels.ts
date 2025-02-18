@@ -1,0 +1,53 @@
+import mongoose from 'mongoose';
+
+const UserSchema = new mongoose.Schema({
+    photo: {
+        type: String,
+        required: true,
+        description: 'URL of the user\'s profile picture'
+    },
+    name: {
+        type: String,
+        required: true,
+        description: 'Full name of the user'
+    },
+    employeeId: {
+        type: String,
+        required: true,
+        description: 'Unique identifier for the user'
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        description: 'Email address of the user'
+    },
+    password: {
+        type: String,
+        required: true,
+        description: 'User\'s password'
+    },
+    startDate: {
+        type: String,
+        required: true,
+        description: 'User\'s start date in the company'
+    },
+    description: {
+        type: String,
+        required: true,
+        description: 'Job description of the user'
+    },
+    contact: {
+        type: String,
+        required: true,
+        description: 'Contact number of the user'
+    },
+    status: {
+        type: String,
+        enum: ['ACTIVE', 'INACTIVE'],
+        required: true,
+        description: 'Current status of the user'
+    }
+});
+
+module.exports = mongoose.model('User', UserSchema);
