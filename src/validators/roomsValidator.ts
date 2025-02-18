@@ -1,7 +1,7 @@
-import { Room } from "../interfaces/roomsInterface";
+import { RoomDocument } from "../interfaces/roomsInterface";
 
 class RoomValidator {
-  validate(room: Room): { valid: boolean; errors: string[] } {
+  validate(room: RoomDocument): { valid: boolean; errors: string[] } {
     const errors: string[] = [];
 
     if (!room.roomPhoto || typeof room.roomPhoto !== "string" || room.roomPhoto.trim() === "") {
@@ -28,8 +28,8 @@ class RoomValidator {
       errors.push("Offer price must be a valid number.");
     }
 
-    if (!room.status || !["Available", "Booked", "In Progress"].includes(room.status)) {
-      errors.push("Room status must be 'Available', 'Booked', or 'In Progress'.");
+    if (!room.status || !["Available", "Booked"].includes(room.status)) {
+      errors.push("Room status must be 'Available'or 'Booked'.");
     }
 
     if (room.checkIn && isNaN(new Date(room.checkIn).getTime())) {

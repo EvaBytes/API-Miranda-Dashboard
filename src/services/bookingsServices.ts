@@ -1,45 +1,36 @@
-import { Booking } from "../interfaces/bookingsInterface";
-import bookingData from "../data/bookings.json";
+import { Booking } from '../models/bookingsModels'; 
+import { BookingDocument } from '../interfaces/bookingsInterface'; 
 
 export class BookingsService {
-    private bookings: Booking[] = bookingData as Booking[];
-
-    fetchAll(): Booking[] {
-        return this.bookings;
+    static async fetchAll(): Promise<BookingDocument[]> {
+        return await Booking.find(); 
     }
 
-    fetchById(reservationNumber: string): Booking | undefined {
-        return this.bookings.find((booking) => booking.guest.reservationNumber === reservationNumber);
+    static async fetchById(reservationNumber: string): Promise<BookingDocument | null> {
+        return await Booking.findOne({ 'guest.reservationNumber': reservationNumber }); 
     }
 
-    create(booking: Booking): Booking {
-        const newBooking = { ...booking, roomNumber: (this.bookings.length + 1).toString() };
-        this.bookings.push(newBooking);
-        return newBooking;
+    static async create(bookingData: BookingDocument): Promise<BookingDocument> {
+        const newBooking = new Booking(bookingData);
+        return await newBooking.save(); 
     }
 
-    update(reservationNumber: string, booking: Booking): Booking | null {
-        const bookingToUpdate = this.bookings.find((booking) => booking.guest.reservationNumber === reservationNumber);
-        if (bookingToUpdate) {
-            const updatedBooking = { ...bookingToUpdate, ...booking };
-            this.bookings = this.bookings.map((b) => (b.guest.reservationNumber === reservationNumber ? updatedBooking : b));
-            return updatedBooking;
-        }
-        return null;
+    static async update(reservationNumber: string, bookingData: Partial<BookingDocument>): Promise<BookingDocument | null> {
+        return await Booking.findOneAndUpdate(
+            { 'guest.reservationNumber': reservationNumber }, 
+            bookingData, 
+            { new: true } 
+        ); 
     }
 
-    delete(reservationNumber: string): boolean {
-        const bookingToDelete = this.bookings.find((booking) => booking.guest.reservationNumber === reservationNumber);
-        if (bookingToDelete) {
-            this.bookings = this.bookings.filter((booking) => booking.guest.reservationNumber !== reservationNumber);
-            return true;
-        }
-        return false;
+    static async delete(reservationNumber: string): Promise<boolean> {
+        const result = await Booking.deleteOne({ 'guest.reservationNumber': reservationNumber }); 
+        return result.deletedCount > 0; 
     }
 }
 
-export const getAllBookings = () => { const service = new BookingsService(); return service.fetchAll(); };
-export const getBooking = (reservationNumber: string) => { const service = new BookingsService(); return service.fetchById(reservationNumber); };
-export const createBooking = (booking: Booking) => { const service = new BookingsService(); return service.create(booking); };
-export const updateBooking = (reservationNumber: string, booking: Booking) => { const service = new BookingsService(); return service.update(reservationNumber, booking); };
-export const deleteBooking = (reservationNumber: string) => { const service = new BookingsService(); return service.delete(reservationNumber); };
+export const getAllBookings = BookingsService.fetchAll;
+export const getBooking = BookingsService.fetchById;
+export const createBooking = BookingsService.create;
+export const updateBooking = BookingsService.update;
+export const deleteBooking = BookingsService.delete;

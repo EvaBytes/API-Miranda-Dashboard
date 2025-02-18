@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { BookingDocument } from '../interfaces/bookingsInterface'; 
 
 const BookingSchema = new mongoose.Schema({
     photo: {
@@ -39,7 +40,7 @@ const BookingSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['In Progress', 'Confirmed', 'Cancelled', 'Completed'],
+        enum: ['Check-In', 'Check-Out', 'In Progress'],
         required: true,
         description: 'Current booking status'
     },
@@ -57,7 +58,7 @@ const BookingSchema = new mongoose.Schema({
         },
         image: {
             type: String,
-            required: false,
+            required: true,
             description: 'Profile image of the guest'
         }
     },
@@ -83,4 +84,4 @@ const BookingSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('Booking', BookingSchema);
+export const Booking = mongoose.model<BookingDocument>('Booking', BookingSchema);

@@ -1,48 +1,36 @@
-import { Message } from "../interfaces/contactInterface";
-import messageData from "../data/Messages.json";
+import { Contact } from '../models/contactModels'; 
+import { Message } from '../interfaces/contactInterface'; 
 
 export class ContactService {
-    private messages: Message[] = messageData as Message[];
-
-    fetchAll(): Message[] {
-        return this.messages;
+    static async fetchAll(): Promise<Message[]> {
+        return await Contact.find(); 
     }
 
-    fetchById(messageId: string): Message | undefined {
-        return this.messages.find((message) => message.messageId === messageId);
+    static async fetchById(messageId: string): Promise<Message | null> {
+        return await Contact.findOne({ messageId }); 
     }
-    
 
-    create(message: Message): Message {
-        const newMessage = { ...message, messageId: (this.messages.length + 1).toString() }; 
-        this.messages.push(newMessage);
-        return newMessage;
-    }    
-
-    update(messageId: string, message: Message): Message | null {
-        const messageToUpdate = this.messages.find((m) => m.messageId === messageId);
-        if (messageToUpdate) {
-            const updatedMessage = { ...messageToUpdate, ...message };
-            this.messages = this.messages.map((m) => (m.messageId === messageId ? updatedMessage : m));
-            return updatedMessage;
-        }
-        return null;
-    }    
-
-    delete(messageId: string): boolean {
-        const messageToDelete = this.messages.find((message) => message.messageId === messageId);
-        if (messageToDelete) {
-            this.messages = this.messages.filter((message) => message.messageId !== messageId);
-            return true;
-        }
-        return false;
+    static async create(messageData: Message): Promise<Message> {
+        const newMessage = new Contact(messageData);
+        return await newMessage.save(); 
     }
-}    
 
-const service = new ContactService(); 
+    static async update(messageId: string, messageData: Partial<Message>): Promise<Message | null> {
+        return await Contact.findOneAndUpdate(
+            { messageId },
+            messageData,
+            { new: true }
+        ); 
+    }
 
-export const getAllMessages = () => service.fetchAll();
-export const getMessage = (messageId: string) => service.fetchById(messageId);
-export const createMessage = (message: Message) => service.create(message);
-export const updateMessage = (messageId: string, message: Message) => service.update(messageId, message);
-export const deleteMessage = (messageId: string) => service.delete(messageId);
+    static async delete(messageId: string): Promise<boolean> {
+        const result = await Contact.deleteOne({ messageId });
+        return result.deletedCount > 0;
+    }
+}
+
+export const getAllMessages = ContactService.fetchAll;
+export const getMessage = ContactService.fetchById;
+export const createMessage = ContactService.create;
+export const updateMessage = ContactService.update;
+export const deleteMessage = ContactService.delete;

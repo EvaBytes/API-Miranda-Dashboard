@@ -1,26 +1,27 @@
-export interface Guest {
+import { Document } from 'mongoose';
+
+export interface Guest extends Document {
     fullName: string;
     reservationNumber: string;
     image: string;
-  }
+}
 
-  export interface Room {
-    roomPhoto: string;
-    roomNumber: string;
-    roomType: string;
-    facilities: string;
-    rate: string;
-    offerPrice: string;
-    status: "Available" | "Booked" | "In Progress";
-    guest?: Guest;
-    orderDate?: string;
-    checkIn?: string;
-    checkOut?: string;
-    description?: string;
-    offer?: string;
-    discount?: string;
-    cancellationPolicy?: string;
-    amenities?: string[];
-    photos?: string[];
-  }
-  
+export interface RoomDocument extends Document {
+  roomPhoto: string;
+  roomNumber: string;
+  roomType: string;
+  facilities: string;
+  rate: string;
+  offerPrice: string;
+  status: "Available" | "Booked" ;
+  guest?: Guest; 
+  orderDate?: string;
+  checkIn?: string;
+  checkOut?: string;
+  description?: string;
+  offer?: string;
+  discount?: string;
+  cancellationPolicy?: string;
+  amenities?: string[];
+  photos?: string[];
+}

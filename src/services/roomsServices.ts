@@ -1,47 +1,36 @@
-import { Room } from "../interfaces/roomsInterface";
-import roomData from "../data/Rooms.json";
+import { Room } from '../models/roomsModels'; 
+import { RoomDocument } from '../interfaces/roomsInterface'; 
 
-class RoomService {
-    private rooms: Room[] = roomData as Room[];
-
-    fetchAll(): Room[] {
-        return this.rooms;
+export class RoomService {
+    static async fetchAll(): Promise<RoomDocument[]> {
+        return await Room.find(); 
     }
 
-    fetchById(roomNumber: string): Room | undefined {
-        return this.rooms.find((room) => room.roomNumber === roomNumber);
+    static async fetchById(roomNumber: string): Promise<RoomDocument | null> {
+        return await Room.findOne({ roomNumber }); 
     }
 
-    create(room: Room): Room {
-        const newRoom = { ...room, roomNumber: (this.rooms.length + 1).toString() }; 
-        this.rooms.push(newRoom);
-        return newRoom;
+    static async create(roomData: RoomDocument): Promise<RoomDocument> {
+        const newRoom = new Room(roomData);
+        return await newRoom.save(); 
     }
 
-    update(roomNumber: string, room: Room): Room | null {
-        const roomToUpdate = this.rooms.find((room) => room.roomNumber === roomNumber);
-        if (roomToUpdate) {
-            const updatedRoom = { ...roomToUpdate, ...room };
-            this.rooms = this.rooms.map((r) => (r.roomNumber === roomNumber ? updatedRoom : r));
-            return updatedRoom;
-        }
-        return null;
+    static async update(roomNumber: string, roomData: Partial<RoomDocument>): Promise<RoomDocument | null> {
+        return await Room.findOneAndUpdate(
+            { roomNumber },
+            roomData,
+            { new: true }
+        ); 
     }
 
-    delete(roomNumber: string): boolean {
-        const roomToDelete = this.rooms.find((room) => room.roomNumber === roomNumber);
-        if (roomToDelete) {
-            this.rooms = this.rooms.filter((room) => room.roomNumber !== roomNumber);
-            return true;
-        }
-        return false;
+    static async delete(roomNumber: string): Promise<boolean> {
+        const result = await Room.deleteOne({ roomNumber });
+        return result.deletedCount > 0;
     }
 }
 
-const service = new RoomService();
-
-export const getAllRooms = () => service.fetchAll();
-export const getRoom = (roomNumber: string) => service.fetchById(roomNumber);
-export const createRoom = (room: Room) => service.create(room);
-export const updateRoom = (roomNumber: string, room: Room) => service.update(roomNumber, room);
-export const deleteRoom = (roomNumber: string) => service.delete(roomNumber);
+export const getAllRooms = RoomService.fetchAll;
+export const getRoom = RoomService.fetchById;
+export const createRoom = RoomService.create;
+export const updateRoom = RoomService.update;
+export const deleteRoom = RoomService.delete;

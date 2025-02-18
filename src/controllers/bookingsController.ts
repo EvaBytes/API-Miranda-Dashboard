@@ -233,12 +233,9 @@ bookingRouter.delete(
   "/:reservationNumber",
   asyncHandler(async (req: Request, res: Response) => {
     const deletedBooking = await deleteBooking(req.params.reservationNumber);
+
     if (deletedBooking) {
-      res
-        .status(204)
-        .json({
-          data: `Booking with reservationNumber [${req.params.reservationNumber}] deleted!`,
-        });
+      res.status(204).json({ data: "Booking deleted successfully" });
     } else {
       res.status(404).json({ error: "Booking not found" });
     }

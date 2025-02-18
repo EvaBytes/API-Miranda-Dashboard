@@ -1,10 +1,11 @@
 import mongoose from 'mongoose';
+import { RoomDocument } from '../interfaces/roomsInterface'; 
 
 const RoomSchema = new mongoose.Schema({
     roomPhoto: {
         type: String,
         required: true,
-        description: 'URL of the rooms photo'
+        description: 'URL of the room photo'
     },
     roomNumber: {
         type: String,
@@ -15,7 +16,7 @@ const RoomSchema = new mongoose.Schema({
     roomType: {
         type: String,
         required: true,
-        description: 'Type of room (e.g., Single, Double Bed Superior)'
+        description: 'Type of the room'
     },
     facilities: {
         type: String,
@@ -34,7 +35,7 @@ const RoomSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['Available', 'Booked', 'Occupied', 'Maintenance'],
+        enum: ['Available', 'Booked'],
         required: true,
         description: 'Current status of the room'
     },
@@ -69,7 +70,37 @@ const RoomSchema = new mongoose.Schema({
         type: String,
         required: false,
         description: 'Check-out date and time'
+    },
+    description: {
+        type: String,
+        required: false,
+        description: 'Description of the room'
+    },
+    offer: {
+        type: String,
+        required: false,
+        description: 'Special offer for the room'
+    },
+    discount: {
+        type: String,
+        required: false,
+        description: 'Discount applied to the room'
+    },
+    cancellationPolicy: {
+        type: String,
+        required: false,
+        description: 'Cancellation policy for the room'
+    },
+    amenities: {
+        type: [String],
+        required: false,
+        description: 'List of amenities in the room'
+    },
+    photos: {
+        type: [String],
+        required: false,
+        description: 'Array of URLs of the room photos'
     }
 });
 
-module.exports = mongoose.model('Room', RoomSchema);
+export const Room = mongoose.model<RoomDocument>('Room', RoomSchema);

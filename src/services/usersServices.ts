@@ -1,46 +1,36 @@
-import { UserInterface } from "../interfaces/usersInterface";
-import usersData from "../data/Users.json";
+import { User } from '../models/usersModels'; 
+import { UserDocument } from '../interfaces/usersInterface'; 
 
 export class UsersService {
-    private users: UserInterface[] = usersData as UserInterface[];
-
-
-    fetchAll(): UserInterface[] {
-        return this.users;
+    static async fetchAll(): Promise<UserDocument[]> {
+        return await User.find(); 
     }
 
-    fetchById(employeeId: string): UserInterface | undefined {
-        return this.users.find((user) => user.employeeId === employeeId);
+    static async fetchById(employeeId: string): Promise<UserDocument | null> {
+        return await User.findOne({ employeeId });
     }
 
-    create(user: UserInterface): UserInterface {
-        const newUser = { ...user, employeeId: (this.users.length + 1).toString() };
-        this.users.push(newUser);
-        return newUser;
+    static async create(userData: UserDocument): Promise<UserDocument> {
+        const newUser = new User(userData);
+        return await newUser.save(); 
     }
 
-    update(employeeId: string, user: UserInterface): UserInterface | null {
-        const userToUpdate = this.users.find((user) => user.employeeId === employeeId);
-        if (userToUpdate) {
-            const updatedUser = { ...userToUpdate, ...user };
-            this.users = this.users.map((u) => (u.employeeId === employeeId ? updatedUser : u));
-            return updatedUser;
-        }
-        return null;
+    static async update(employeeId: string, userData: Partial<UserDocument>): Promise<UserDocument | null> {
+        return await User.findOneAndUpdate(
+            { employeeId },
+            userData,
+            { new: true }
+        ); 
     }
 
-    delete(employeeId: string): boolean {
-        const userToDelete = this.users.find((user) => user.employeeId === employeeId);
-        if (userToDelete) {
-            this.users = this.users.filter((user) => user.employeeId !== employeeId);
-            return true;
-        }
-        return false;
+    static async delete(employeeId: string): Promise<boolean> {
+        const result = await User.deleteOne({ employeeId });
+        return result.deletedCount > 0;
     }
 }
 
-export const getAllUsers = () => {const service = new UsersService();return service.fetchAll();};
-export const getUser = (employeeId: string) => {const service = new UsersService();return service.fetchById(employeeId);};
-export const createUser = (user: UserInterface) => {const service = new UsersService();return service.create(user);};
-export const updateUser = (employeeId: string, user: UserInterface) => {const service = new UsersService();return service.update(employeeId,user);};
-export const deleteUser = (employeeId: string) => {const service = new UsersService();return service.delete(employeeId);};
+export const getAllUsers = UsersService.fetchAll;
+export const getUser = UsersService.fetchById;
+export const createUser = UsersService.create;
+export const updateUser = UsersService.update;
+export const deleteUser = UsersService.delete;

@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { UserDocument } from '../interfaces/usersInterface'; 
 
 const UserSchema = new mongoose.Schema({
     photo: {
@@ -50,4 +51,4 @@ const UserSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('User', UserSchema);
+export const User = mongoose.model<UserDocument>('User', UserSchema);

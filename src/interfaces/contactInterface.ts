@@ -1,4 +1,6 @@
-export interface Message {
+import { Document } from 'mongoose';
+
+export interface Message extends Document {
     photo: string;
     date: string;
     messageId: string;
@@ -7,5 +9,5 @@ export interface Message {
     phone: string;
     subject: string;
     comment: string;
-    status: "read" | "unread";
-  }
+    status: 'read' | 'unread';
+}

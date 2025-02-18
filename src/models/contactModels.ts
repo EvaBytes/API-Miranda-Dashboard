@@ -44,10 +44,10 @@ const ContactSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['unread', 'read', 'responded'],
+        enum: ['unread', 'read'],
         required: true,
         description: 'Current status of the message'
     }
 });
 
-module.exports = mongoose.model('Contact', ContactSchema);
+export const Contact = mongoose.model('Contact', ContactSchema);

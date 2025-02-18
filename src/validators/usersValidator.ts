@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { UserInterface } from "../interfaces/usersInterface";
+import { UserDocument } from "../interfaces/usersInterface";
 
 const isValidEmail = (email: string): boolean => {
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
@@ -17,7 +17,7 @@ const isValidContact = (contact: string): boolean => {
 };
 
 export const validateUser = (req: Request, res: Response) => {
-    const { photo, name, employeeId, email, startDate, description, contact, status } = req.body as UserInterface;  
+    const { photo, name, employeeId, email, startDate, description, contact, status } = req.body as UserDocument;  
 
     if (!photo || typeof photo !== 'string') {
         return res.status(400).json({ error: 'Photo is required and must be a string.' });

@@ -1,9 +1,9 @@
-import { Booking } from "../interfaces/bookingsInterface";
+import { BookingDocument } from "../interfaces/bookingsInterface";
 
 const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
 
 export class BookingValidator {
-    validate(booking: Booking): { valid: boolean; errors: string[] } {
+    validate(booking: BookingDocument): { valid: boolean; errors: string[] } {
         const errors: string[] = [];
 
         if (!booking.guest || !booking.guest.fullName || !booking.guest.reservationNumber) {

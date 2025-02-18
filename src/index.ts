@@ -11,7 +11,6 @@ import { verifyJWT } from "./middleware/authMiddleware";
 import { connectDB } from "./database/db";
 
 
-
 dotenv.config();
 const app = express();
 const port = 3000;
