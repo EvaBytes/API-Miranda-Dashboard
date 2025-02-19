@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import dotenv from "dotenv";
+import * as dotenv from "dotenv";
 import swaggerUi from "swagger-ui-express";
 import swaggerJsDoc from "swagger-jsdoc";
 import { authRouter } from "./controllers/authController";

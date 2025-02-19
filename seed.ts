@@ -1,19 +1,10 @@
 import mongoose from 'mongoose';
 import { faker } from '@faker-js/faker';
-import { Room } from './models/roomsModels';
-import { Booking } from './models/bookingsModels';
-import { User } from './models/usersModels';
-import { Contact } from './models/contactModels';
-
-const connectDB = async () => {
-    try {
-        await mongoose.connect('mongodb://localhost:27017/MirandaHotel');
-        console.log('Connected to MongoDB');
-    } catch (error) {
-        console.error('Failed to connect to MongoDB:', error);
-        process.exit(1);
-    }
-};
+import { Room } from './src/models/roomsModels';
+import { Booking } from './src/models/bookingsModels';
+import { User } from './src/models/usersModels';
+import { Contact } from './src/models/contactModels';
+import { connectDB } from './src/database/db';
 
 const generateFakeBooking = () => {
     return {
