@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import { AuthService, AuthError } from '../services/authServices';
-import { asyncHandler } from '../utils/asyncHandler';
 import { AuthValidator } from '../validators/authValidator';
+import { AuthCredentials } from '../interfaces/authInterface';
 
 export const authRouter = express.Router();
 
@@ -18,10 +18,10 @@ export const authRouter = express.Router();
  *           schema:
  *             type: object
  *             required:
- *               - username
+ *               - email
  *               - password
  *             properties:
- *               username:
+ *               email:
  *                 type: string
  *                 example: "user@testing.com"
  *               password:
@@ -40,38 +40,27 @@ export const authRouter = express.Router();
  *                   example: "eyJhbGciOiJIUzI1..."
  *       400:
  *         description: Validation errors
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 errors:
- *                   type: array
- *                   items:
- *                     type: string
  *       401:
  *         description: Invalid credentials
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: "Invalid credentials"
  *       500:
  *         description: Internal server error
  */
-authRouter.post('/', asyncHandler(async (req: Request, res: Response) => {
-    const { username, password } = req.body;
-
-    const validation = AuthValidator.validate({ username, password });
-    if (!validation.valid) {return res.status(400).json({ errors: validation.errors });}
+authRouter.post('/', async (req: Request, res: Response) => {
     try {
-        const token = await AuthService.authenticate(username, password);
-        res.json({ token });
-    } catch (error) {if (error instanceof AuthError) {return res.status(401).json({ error: error.message });
-}
-        res.status(500).json({ error: 'Internal server error' });
+        const { email, password } = req.body as AuthCredentials;
+        const validation = AuthValidator.validate({ email, password });
+        if (!validation.valid) {
+            return res.status(400).json({ errors: validation.errors });
+        }
+        const token = await AuthService.authenticate({ email, password });
+
+        return res.status(200).json({ token });
+    } catch (error) {
+        if (error instanceof AuthError) {
+            return res.status(401).json({ error: error.message });
+        }
+
+        console.error('Authentication error:', error);
+        return res.status(500).json({ error: 'Internal server error' });
     }
-}));
+});

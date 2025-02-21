@@ -7,9 +7,8 @@ import { bookingRouter } from "./controllers/bookingsController";
 import { roomRouter } from "./controllers/roomsController";
 import { contactRouter } from "./controllers/contactController";
 import { userRouter } from "./controllers/usersController";
-import { verifyJWT } from "./middleware/authMiddleware";
+import { verifyJWTMiddleware } from "./middleware/authMiddleware";
 import { connectDB } from "./database/db";
-
 
 dotenv.config();
 const app = express();
@@ -21,11 +20,11 @@ connectDB().then(() => {
     console.log("Database connected, starting server...");
 
     app.use("/api/v1/login", authRouter);
-    app.use("/api/v1/bookings", verifyJWT, bookingRouter);
-    app.use("/api/v1/rooms", verifyJWT, roomRouter);
-    app.use("/api/v1/contact", verifyJWT, contactRouter);
-    app.use("/api/v1/user", verifyJWT, userRouter);
-  
+    app.use("/api/v1/bookings", verifyJWTMiddleware, bookingRouter);
+    app.use("/api/v1/rooms", verifyJWTMiddleware, roomRouter);
+    app.use("/api/v1/contact", verifyJWTMiddleware, contactRouter);
+    app.use("/api/v1/user", verifyJWTMiddleware, userRouter);
+
     app.get("/info", (req: Request, res: Response) => {
       res.json({
         hotelName: "Miranda Hotel",
@@ -39,11 +38,11 @@ connectDB().then(() => {
         ]
       });
     });
-  
+
     app.get("/live", (req: Request, res: Response) => {
       res.send(`${new Date().toISOString()}`);
     });
-  
+
     const swaggerOptions = {
       definition: {
         openapi: "3.0.0",
@@ -56,14 +55,18 @@ connectDB().then(() => {
       },
       apis: ["./src/controllers/*.ts"],
     };
-  
+
     const swaggerDocs = swaggerJsDoc(swaggerOptions);
     app.use("/doc", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
-  
+
+    app.use((err: any, req: Request, res: Response, next: Function) => {
+      console.error(err.stack);
+      res.status(500).json({ error: 'Internal Server Error' });
+    });
+
     app.listen(port, () => {
       console.log(`Server is running on http://localhost:${port}`);
     });
-  }).catch((error) => {
+}).catch((error) => {
     console.error("Failed to connect to the database:", error);
-  });
-  
+});

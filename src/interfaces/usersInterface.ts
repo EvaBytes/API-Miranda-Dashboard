@@ -6,7 +6,7 @@ export interface UserDocument extends Document {
     employeeId: string;
     email: string;
     password: string;
-    startDate: string | number;
+    startDate: string;
     description: string;
     contact: string;
     status: "ACTIVE" | "INACTIVE";

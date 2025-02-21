@@ -1,5 +1,6 @@
-import { User } from '../models/usersModels'; 
-import { UserDocument } from '../interfaces/usersInterface'; 
+import bcrypt from 'bcryptjs';
+import { User } from '../models/usersModels';
+import { UserDocument } from '../interfaces/usersInterface';
 
 export class UsersService {
     static async fetchAll(): Promise<UserDocument[]> {
@@ -11,8 +12,21 @@ export class UsersService {
     }
 
     static async create(userData: UserDocument): Promise<UserDocument> {
-        const newUser = new User(userData);
-        return await newUser.save(); 
+        try {
+            const hashedPassword = bcrypt.hashSync(userData.password, 15); 
+            const newUser = new User({
+                ...userData,
+                password: hashedPassword
+            });
+
+            return await newUser.save();
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                throw new Error('Error creating user: ' + error.message);
+            } else {
+                throw new Error('Unknown error occurred during user creation');
+            }
+        }
     }
 
     static async update(employeeId: string, userData: Partial<UserDocument>): Promise<UserDocument | null> {

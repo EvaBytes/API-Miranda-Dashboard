@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import { UserDocument } from '../models/usersModels'; 
-import { User } from '../models/usersModels'; 
-
+import { User } from '../models/usersModels';
+import { UserDocument } from '../interfaces/usersInterface';
+import { asyncHandler } from '../utils/asyncHandler';  
 
 dotenv.config();
 
@@ -13,30 +13,23 @@ export interface AuthenticatedRequest extends Request {
   user?: UserDocument;  
 }
 
-export const verifyJWT = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+const verifyJWT = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   const token = req.header('Authorization')?.split(' ')[1];
+  const {email, password} = req.body;
 
   if (!token) {
-    res.status(401).json({ error: 'Access denied. No token provided.' });
-    return; 
+    return res.status(401).json({ error: 'Access denied. No token provided.' });
   }
 
-  try {
-    const decoded = jwt.verify(token, SECRET_KEY) as { userId: string };  
+  const decoded = jwt.verify(token, SECRET_KEY) as { userId: string };
+  const user = await User.findById(decoded.userId);
 
-    const user = await User.findById(decoded.userId);
-
-    if (!user) {
-      res.status(401).json({ error: 'User not found' });
-      return;
-    }
-
-    req.user = user;  
-    return next();  
-
-  } catch (err) {
-    console.error(err); 
-    res.status(401).json({ error: 'Invalid token' });
-    return; 
+  if (!user) {
+    return res.status(401).json({ error: 'User not found' });
   }
+
+  req.user = user;
+  next();
 };
+
+export const verifyJWTMiddleware = asyncHandler(verifyJWT);

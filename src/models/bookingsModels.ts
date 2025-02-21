@@ -8,7 +8,7 @@ const BookingSchema = new mongoose.Schema({
         description: 'URL of the main booking photo'
     },
     roomPhoto: {
-        type: [String],
+        type: mongoose.Schema.Types.Mixed,
         required: true,
         description: 'Array of URLs of the room photos'
     },
@@ -20,11 +20,13 @@ const BookingSchema = new mongoose.Schema({
     },
     roomType: {
         type: String,
+        enum: ["Single Bed", "Double Bed","Double Bed Superior", "Suite"],
         required: true,
         description: 'Type of the booked room'
     },
     facilities: {
-        type: String,
+        type: [String],
+        enum: ["Air conditioner","High speed WiFi","Breakfast","Kitchen","Cleaning","Shower","Grocery","Single bed","Shop near","Towels","24/7 Online Support","Strong locker","Smart Security","Expert Team"],
         required: true,
         description: 'List of facilities available in the room'
     },

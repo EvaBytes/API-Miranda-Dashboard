@@ -15,11 +15,13 @@ const RoomSchema = new mongoose.Schema({
     },
     roomType: {
         type: String,
+        enum: ["Single Bed", "Double Bed","Double Bed Superior", "Suite"],
         required: true,
         description: 'Type of the room'
     },
     facilities: {
-        type: String,
+        type: [String],
+        enum: ["Air conditioner","High speed WiFi","Breakfast","Kitchen","Cleaning","Shower","Grocery","Single bed","Shop near","Towels","24/7 Online Support","Strong locker","Smart Security","Expert Team"],
         required: true,
         description: 'List of facilities available in the room'
     },
@@ -57,7 +59,7 @@ const RoomSchema = new mongoose.Schema({
         }
     },
     orderDate: {
-        type: String,
+        type: Date,
         required: false,
         description: 'Date and time of the room booking order'
     },
@@ -71,36 +73,6 @@ const RoomSchema = new mongoose.Schema({
         required: false,
         description: 'Check-out date and time'
     },
-    description: {
-        type: String,
-        required: false,
-        description: 'Description of the room'
-    },
-    offer: {
-        type: String,
-        required: false,
-        description: 'Special offer for the room'
-    },
-    discount: {
-        type: String,
-        required: false,
-        description: 'Discount applied to the room'
-    },
-    cancellationPolicy: {
-        type: String,
-        required: false,
-        description: 'Cancellation policy for the room'
-    },
-    amenities: {
-        type: [String],
-        required: false,
-        description: 'List of amenities in the room'
-    },
-    photos: {
-        type: [String],
-        required: false,
-        description: 'Array of URLs of the room photos'
-    }
 });
 
 export const Room = mongoose.model<RoomDocument>('Room', RoomSchema);

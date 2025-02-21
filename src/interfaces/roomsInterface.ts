@@ -9,19 +9,13 @@ export interface Guest extends Document {
 export interface RoomDocument extends Document {
   roomPhoto: string;
   roomNumber: string;
-  roomType: string;
-  facilities: string;
+  roomType: "Single Bed" | "Double Bed" | "Double Bed Superior" | "Suite";
+  facilities: string[];
   rate: string;
-  offerPrice: string;
+  offerPrice?: string;
   status: "Available" | "Booked" ;
   guest?: Guest; 
   orderDate?: string;
   checkIn?: string;
   checkOut?: string;
-  description?: string;
-  offer?: string;
-  discount?: string;
-  cancellationPolicy?: string;
-  amenities?: string[];
-  photos?: string[];
 }

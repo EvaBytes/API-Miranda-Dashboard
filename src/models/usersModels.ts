@@ -5,7 +5,7 @@ const UserSchema = new mongoose.Schema({
     photo: {
         type: String,
         required: true,
-        description: 'URL of the user\'s profile picture'
+        description: 'URL of the users profile picture'
     },
     name: {
         type: String,
@@ -26,12 +26,12 @@ const UserSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
-        description: 'User\'s password'
+        description: 'Users password'
     },
     startDate: {
         type: String,
         required: true,
-        description: 'User\'s start date in the company'
+        description: 'Users start date in the company'
     },
     description: {
         type: String,

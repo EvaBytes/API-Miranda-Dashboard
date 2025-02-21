@@ -16,7 +16,7 @@ class RoomValidator {
       errors.push("Room type must be a valid non-empty string.");
     }
 
-    if (!room.facilities || typeof room.facilities !== "string" || room.facilities.trim() === "") {
+    if (!room.facilities || !Array.isArray(room.facilities) || room.facilities.length === 0) {
       errors.push("Facilities must be a valid non-empty string.");
     }
 
