@@ -9,8 +9,8 @@ import { User } from './src/models/usersModels';
 const generateFakeBooking = (index: number) => {
     const checkInDate = faker.date.future();
     const checkOutDate = new Date(checkInDate.getTime() + (2 * 24 * 60 * 60 * 1000));
-        const rate = parseFloat(faker.finance.amount(100, 1000, 2)); 
-    let offerPrice = faker.helpers.maybe(() => parseFloat(faker.finance.amount(50, rate - 1, 2)));
+    const rate = parseFloat(faker.finance.amount({ min: 100, max: 1000, dec: 2 }));
+    const offerPrice = faker.helpers.maybe(() => parseFloat(faker.finance.amount({ min: 50, max: rate - 1, dec: 2 })));    
     
     return {
         photo: faker.image.url(),
@@ -36,8 +36,8 @@ const generateFakeBooking = (index: number) => {
 const generateFakeRoom = (index: number) => {
     const checkInDate = faker.date.future();
     const checkOutDate = new Date(checkInDate.getTime() + (2 * 24 * 60 * 60 * 1000));
-    const rate = parseFloat(faker.finance.amount(100, 1000, 2)); 
-    const offerPrice = faker.helpers.maybe(() => parseFloat(faker.finance.amount(50, rate - 1, 2)));
+    const rate = parseFloat(faker.finance.amount({ min: 100, max: 1000, dec: 2 }));
+    const offerPrice = faker.helpers.maybe(() => parseFloat(faker.finance.amount({ min: 50, max: rate - 1, dec: 2 })));    
 
     return {
         roomPhoto: faker.image.url(),
@@ -74,7 +74,7 @@ const generateFakeContact = (index: number) => {
 };
 
 const generateFakeUser = (index: number) => {
-    const hashedPassword = bcrypt.hashSync(faker.internet.password(), 15);
+    const hashedPassword = bcrypt.hashSync('123456', 15);
 
     return {
         photo: faker.image.avatar(),
