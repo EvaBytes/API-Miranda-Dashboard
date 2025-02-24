@@ -1,0 +1,21 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+service: miranda-hotel-api
+
+provider:
+  name: aws
+  runtime: nodejs22.x
+  stage: dev
+  region: eu-west-3
+
+functions:
+  app:
+    handler: src/index.handler
+    events:
+      - http:
+          path: /{proxy+}
+          method: ANY
+          cors: true
+      - http:
+          path: /
+          method: ANY
+          cors: true
