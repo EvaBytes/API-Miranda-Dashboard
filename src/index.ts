@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import * as dotenv from "dotenv";
+import cors from "cors";
 import swaggerUi from "swagger-ui-express";
 import swaggerJsDoc from "swagger-jsdoc";
 import { authRouter } from "./controllers/authController";
@@ -12,9 +13,17 @@ import { connectDB } from "./database/db";
 
 dotenv.config();
 const app = express();
-const port = 3000;
+const port = 3001;
 
 app.use(express.json());
+
+
+app.use(cors({
+  origin: '*',
+  credentials: true,
+  methods: "GET, POST, PUT, DELETE, OPTIONS",
+  allowedHeaders: "Content-Type, Authorization"
+}));
 
 connectDB().then(() => {
     console.log("Database connected, starting server...");
@@ -51,7 +60,7 @@ connectDB().then(() => {
           version: "1.0.0",
           description: "API documentation for Miranda Hotel",
         },
-        servers: [{ url: "http://localhost:3000" }],
+        servers: [{ url: "http://localhost:3001" }],
       },
       apis: ["./src/controllers/*.ts"],
     };
