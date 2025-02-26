@@ -24,6 +24,7 @@ app.use(cors({
   methods: "GET, POST, PUT, DELETE, OPTIONS",
   allowedHeaders: "Content-Type, Authorization"
 }));
+
 app.use("/api/v1/login", authRouter);
 app.use("/api/v1/bookings", verifyJWTMiddleware, bookingRouter);
 app.use("/api/v1/rooms", verifyJWTMiddleware, roomRouter);

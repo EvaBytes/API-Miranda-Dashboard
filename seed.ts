@@ -74,7 +74,8 @@ const generateFakeContact = (index: number) => {
 };
 
 const generateFakeUser = (index: number) => {
-    const hashedPassword = bcrypt.hashSync('123456', 15);
+    const password = process.env.DEFAULT_USER_PASSWORD || 'password';
+    const hashedPassword = bcrypt.hashSync(password, Number(process.env.BCRYPT_SALT_ROUNDS) || 15);
 
     return {
         photo: faker.image.avatar(),
