@@ -15,7 +15,6 @@ export interface AuthenticatedRequest extends Request {
 
 const verifyJWT = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   const token = req.header('Authorization')?.split(' ')[1];
-  const {email, password} = req.body;
 
   if (!token) {
     return res.status(401).json({ error: 'Access denied. No token provided.' });
@@ -29,6 +28,7 @@ const verifyJWT = async (req: AuthenticatedRequest, res: Response, next: NextFun
   }
 
   req.user = user;
+  console.log("User verified:", user.email);
   next();
 };
 

@@ -29,7 +29,7 @@ export const userRouter = express.Router();
  *           example: "32"
  *         email:
  *           type: string
- *           example: "user@testing.com"
+ *           example: "user1@example.com"
  *         password:
  *           type: string
  *           example: "123456"
@@ -64,6 +64,7 @@ export const userRouter = express.Router();
  *                 $ref: '#/components/schemas/User'
  */
 userRouter.get('/', asyncHandler(async (req: Request, res: Response) => {
+    console.log("GET /api/v1/users called");
     const users = await getAllUsers();
     res.status(200).json({ data: users });
 }));

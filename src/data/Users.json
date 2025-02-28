@@ -1,4 +1,4 @@
-[{"photo":"/profile.jpeg","name":"Eva Sevillano","employeeId":"1","email":"user@testing.com", "password": "123456","startDate":"13/11/2024","description":"General Manager.","contact":"558-783-6361","status":"ACTIVE"},
+[{"photo":"/profile.jpeg","name":"Eva Sevillano","employeeId":"1","email":"user@example.com", "password": "123456","startDate":"13/11/2024","description":"General Manager.","contact":"558-783-6361","status":"ACTIVE"},
 {"photo":"/Profile2.png","name":"Shaun Jaycox","employeeId":"32","email":"user@testing.com", "password": "123456","startDate":"13/11/2024","description":"Front Desk Receptionist.","contact":"733-960-2795","status":"ACTIVE"},
 {"photo":"/Profile3.png","name":"Taddeo Safont","employeeId":"30","email":"user@testing.com","password": "123456","startDate":"13/11/2024","description":"Housekeeping.","contact":"751-599-0624","status":"INACTIVE"},
 {"photo":"/Profile1.png","name":"Jacqui Rickson","employeeId":"4","email":"user@testing.com","password": "123456","startDate":"13/11/2024","description":"The Front Desk Receptionist.","contact":"894-774-1276","status":"ACTIVE"},

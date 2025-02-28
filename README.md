@@ -14,7 +14,7 @@ This project is a simple Express-based API for managing hotel operations, includ
 - /api/v1/rooms: Get available room information.
 - /api/v1/contact: Create a new contact message.
 - /api/v1/contact/{roomNumber}: Delete a contact message.
-- /api/v1/user: Register a new user.
+- /api/v1/users: Register a new user.
 - /api/v1/login: Login endpoint to authenticate users and generate JWT tokens.
 
 

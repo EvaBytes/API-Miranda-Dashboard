@@ -112,8 +112,6 @@ bookingRouter.get(
   "/:reservationNumber",
   asyncHandler(async (req: Request, res: Response) => {
     const reservationNumber = req.params.reservationNumber;
-    console.log("Reservation Number received:", reservationNumber); // IS IT WORKING?!
-
     const booking = await getBooking(reservationNumber);
 
     if (booking) {

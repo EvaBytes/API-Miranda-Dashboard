@@ -11,7 +11,7 @@ export interface BookingDocument extends Document {
     roomPhoto: string | string[];
     roomNumber: string;
     roomType: "Single Bed" | "Double Bed" | "Double Bed Superior" | "Suite";
-    facilities: string[];
+    facilities: string | string[];
     rate: string;
     offerPrice?: string;
     status: "Check-In" | "Check-Out" | "In Progress";

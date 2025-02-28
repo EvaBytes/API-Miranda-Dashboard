@@ -23,7 +23,7 @@ export const authRouter = express.Router();
  *             properties:
  *               email:
  *                 type: string
- *                 example: "user@testing.com"
+ *                 example: "user1@example.com"
  *               password:
  *                 type: string
  *                 example: "123456"

@@ -8,7 +8,7 @@ app.use('/api/v1/login', authRouter);
 describe('POST /api/v1/login', () => {
   it('should return 200 and a JWT token when valid credentials are provided', async () => {
     const validUser = {
-      username: 'user@testing.com',
+      username: 'user@example.com',
       password: '123456',
     };
 
@@ -33,7 +33,7 @@ describe('POST /api/v1/login', () => {
 
   it('should return 401 when invalid credentials are provided', async () => {
     const invalidCredentials = {
-      username: 'user@testing.com',
+      username: 'user@example.com',
       password: 'notright',  
     };
 
@@ -48,7 +48,7 @@ describe('POST /api/v1/login', () => {
     jest.spyOn(AuthService, 'authenticate').mockRejectedValueOnce(new Error('Something went wrong'));
 
     const validUser = {
-      username: 'user@testing.com',
+      username: 'user1@example.com',
       password: '123456',
     };
 
