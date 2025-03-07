@@ -10,6 +10,7 @@ import { contactRouter } from "./controllers/contactController";
 import { userRouter } from "./controllers/usersController";
 import { verifyJWTMiddleware } from "./middleware/authMiddleware";
 import { connectDB } from "./database/db";
+import "./types/express";
 
 dotenv.config();
 const app = express();
@@ -17,19 +18,33 @@ const port = 3001;
 
 app.use(express.json());
 
-
 app.use(cors({
   origin: "http://localhost:5173",
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
+let db: any;
+connectDB().then((connection) => {
+  db = connection;
+  console.log("Database connected, starting server...");
+  app.listen(port, () => {
+      console.log(`Server running at http://localhost:${port}`);
+  });
+}).catch((error) => {
+  console.error("Failed to connect to the database:", error);
+});
+
+app.use((req, res, next) => {
+  req.db = db; 
+  next();
+});
 
 app.use("/api/v1/login", authRouter);
-app.use("/api/v1/bookings",verifyJWTMiddleware, bookingRouter);
-app.use("/api/v1/rooms",verifyJWTMiddleware, roomRouter);
-app.use("/api/v1/contacts",verifyJWTMiddleware, contactRouter);
-app.use("/api/v1/users",verifyJWTMiddleware, userRouter);
+app.use("/api/v1/bookings", verifyJWTMiddleware, bookingRouter);
+app.use("/api/v1/rooms", verifyJWTMiddleware, roomRouter);
+app.use("/api/v1/contacts", verifyJWTMiddleware, contactRouter);
+app.use("/api/v1/users", verifyJWTMiddleware, userRouter);
 
 app.get("/info", (req: Request, res: Response) => {
   res.json({
@@ -45,7 +60,7 @@ app.get("/info", (req: Request, res: Response) => {
   });
 });
 
-const swaggerOptions = {
+const swaggerOptions = { 
   definition: {
     openapi: "3.0.0",
     info: {
@@ -55,7 +70,7 @@ const swaggerOptions = {
     },
     servers: [{ url: "http://localhost:3001" }],
   },
-  apis: ["./src/controllers/*.ts"],
+  apis: ["./src/controllers/*.ts"], 
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
@@ -67,16 +82,6 @@ app.use((err: any, req: Request, res: Response, next: Function) => {
   res.status(500).json({ error: err.message || 'Internal Server Error' });
 });
 
-
 app.get("/live", (req: Request, res: Response) => {
   res.send(`${new Date().toISOString()}`);
-});
-
-connectDB().then(() => {
-    console.log("Database connected, starting server...");
-    app.listen(port, () => {
-        console.log(`Server running at http://localhost:${port}`);
-    });
-}).catch((error) => {
-    console.error("Failed to connect to the database:", error);
 });
