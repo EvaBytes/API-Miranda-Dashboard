@@ -30,7 +30,7 @@ export class AuthService {
         return jwt.sign(
             { userId: user._id, email: user.email, name: user.name }, 
             SECRET_KEY, 
-            { expiresIn: '1h' }
+            { expiresIn: '30m' }
         );
     }
 }

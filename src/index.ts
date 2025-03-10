@@ -10,7 +10,7 @@ import { contactRouter } from "./controllers/contactController";
 import { userRouter } from "./controllers/usersController";
 import { verifyJWTMiddleware } from "./middleware/authMiddleware";
 import { connectDB } from "./database/db";
-import "./types/express";
+import {} from "./types/express";
 
 dotenv.config();
 const app = express();
@@ -35,8 +35,8 @@ connectDB().then((connection) => {
   console.error("Failed to connect to the database:", error);
 });
 
-app.use((req, res, next) => {
-  req.db = db; 
+app.use((req: Request, res: Response, next) => {
+  req.db = db;
   next();
 });
 
