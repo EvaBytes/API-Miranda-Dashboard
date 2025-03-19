@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { createMessage, deleteMessage, getAllMessages, getMessage, updateMessage } from "../services/contactServices";
+import { createMessage, deleteMessage, fetchAllMessages, fetchMessageById, updateMessage } from "../services/contactServices";
 import { asyncHandler } from "../utils/asyncHandler";
 
 export const contactRouter = express.Router();
@@ -64,7 +64,7 @@ export const contactRouter = express.Router();
  *                 $ref: '#/components/schemas/Contact'
  */
 contactRouter.get('/', asyncHandler(async (req: Request, res: Response) => {
-    const messages = await getAllMessages();
+    const messages = await fetchAllMessages();
     res.status(200).json({ data: messages });
 }));
 
@@ -92,7 +92,7 @@ contactRouter.get('/', asyncHandler(async (req: Request, res: Response) => {
  *         description: Message not found
  */
 contactRouter.get('/:messageId', asyncHandler(async (req: Request, res: Response) => {
-    const message = await getMessage(req.params.messageId);
+    const message = await fetchMessageById(req.params.messageId);
     if (message) {res.status(200).json({ data: message });
     } else {res.status(404).json({ error: 'Message not found' });}
 }));

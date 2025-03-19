@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { getAllUsers, getUser, createUser, updateUser, deleteUser } from "../services/usersServices";
+import { fetchAllUsers, fetchUserById, createUser, updateUser, deleteUser } from "../services/usersServices";
 import { asyncHandler } from "../utils/asyncHandler";
 
 export const userRouter = express.Router();
@@ -65,7 +65,7 @@ export const userRouter = express.Router();
  */
 userRouter.get('/', asyncHandler(async (req: Request, res: Response) => {
     console.log("GET /api/v1/users called");
-    const users = await getAllUsers();
+    const users = await fetchAllUsers();
     res.status(200).json({ data: users });
 }));
 
@@ -93,7 +93,7 @@ userRouter.get('/', asyncHandler(async (req: Request, res: Response) => {
  *         description: User not found
  */
 userRouter.get('/:employeeId', asyncHandler(async (req: Request, res: Response) => {
-    const user = await getUser(req.params.employeeId);
+    const user = await fetchUserById(req.params.employeeId);
     if (user) {res.status(200).json({ data: user });
     } else {
         res.status(404).json({ error: 'User not found' });

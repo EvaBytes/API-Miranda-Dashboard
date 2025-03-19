@@ -21,15 +21,28 @@ export class RoomsService {
         }
     }
 
-    async create(roomData: Partial<Room>): Promise<Room> {
+    async create(roomData: Room): Promise<Room> {
         try {
-            const finalRoomData = {
+            if (!roomData.roomNumber || roomData.roomNumber.trim() === "") {
+                throw new Error('roomNumber is required and cannot be undefined or empty');
+            }
+
+            const existingRoom = await RoomModel.findOne({
+                where: { roomNumber: roomData.roomNumber }
+            });
+
+            if (existingRoom) {
+                throw new Error(`Room number "${roomData.roomNumber}" already exists`);
+            }
+
+            const finalRoomData: Room = {
                 ...roomData,
-                roomPhoto: roomData.roomPhoto ?? null, 
+                roomPhoto: roomData.roomPhoto ?? null,
+                status: roomData.status ?? "Available",
             };
 
             const newRoom = await RoomModel.create(finalRoomData);
-            return newRoom.toJSON() as Room;  
+            return newRoom.toJSON() as Room;
         } catch (error) {
             throw new Error('Error creating room');
         }
@@ -66,6 +79,6 @@ export const roomsService = new RoomsService();
 
 export const fetchAllRooms = async () => roomsService.fetchAll();
 export const fetchRoomById = async (roomId: string) => roomsService.fetchById(roomId);
-export const createRoom = async (roomData: Partial<Room>) => roomsService.create(roomData);
+export const createRoom = async (roomData: Room) => roomsService.create(roomData);
 export const updateRoom = async (roomId: string, roomData: Partial<Room>) => roomsService.update(roomId, roomData);
 export const deleteRoom = async (roomId: string) => roomsService.delete(roomId);
