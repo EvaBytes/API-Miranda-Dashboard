@@ -1,7 +1,7 @@
-import { RoomDocument } from "../interfaces/roomsInterface";
+import { Room } from "../interfaces/roomsInterface";
 
 class RoomValidator {
-  validate(room: RoomDocument): { valid: boolean; errors: string[] } {
+  validate(room: Room): { valid: boolean; errors: string[] } {
     const errors: string[] = [];
 
     if (!room.roomPhoto || typeof room.roomPhoto !== "string" || room.roomPhoto.trim() === "") {

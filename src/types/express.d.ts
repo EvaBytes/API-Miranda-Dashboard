@@ -1,9 +1,13 @@
-import { Pool } from "mysql2/promise";
+import { UserModel } from '../models/usersModels';
 
 declare global {
-  namespace Express {
-    interface Request {
-      db?: Pool;
+    namespace Express {
+        interface Request {
+            user?: {
+                id: number;
+                email: string;
+                name: string;
+            };
+        }
     }
-  }
 }

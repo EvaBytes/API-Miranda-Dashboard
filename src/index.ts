@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import * as dotenv from "dotenv";
 import cors from "cors";
+import serverless from "serverless-http";
 import swaggerUi from "swagger-ui-express";
 import swaggerJsDoc from "swagger-jsdoc";
 import { authRouter } from "./controllers/authController";
@@ -9,7 +10,7 @@ import { roomRouter } from "./controllers/roomsController";
 import { contactRouter } from "./controllers/contactController";
 import { userRouter } from "./controllers/usersController";
 import { verifyJWTMiddleware } from "./middleware/authMiddleware";
-import { connectDB } from "./database/db";
+import { sequelize } from "./database/db";
 import {} from "./types/express";
 
 dotenv.config();
@@ -24,7 +25,34 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
-let db: any;
+
+
+const runServer = async () => {
+  try {
+    await sequelize.authenticate();
+    console.log("Database connected, starting server...");
+    await sequelize.sync({force:false});
+    app.listen(port, () => {
+      console.log(`Server running at http://localhost:${port}`);
+    });
+  } catch (error) {
+    console.error("Error al conectar a la base de datos:", error);
+    process.exit(1);
+  }
+};
+process.on("SIGINT", async () => {
+  try {
+    await sequelize.close();
+    console.log("Conexión a la base de datos cerrada.");
+    process.exit(0);
+  } catch (error) {
+    console.error("Failed to connect to the database:", error);
+    process.exit(1);
+  }
+});
+runServer();
+export const handler = serverless(app);
+/*let db: any;
 connectDB().then((connection) => {
   db = connection;
   console.log("Database connected, starting server...");
@@ -38,7 +66,7 @@ connectDB().then((connection) => {
 app.use((req: Request, res: Response, next) => {
   req.db = db;
   next();
-});
+});*/
 
 app.use("/api/v1/login", authRouter);
 app.use("/api/v1/bookings", verifyJWTMiddleware, bookingRouter);

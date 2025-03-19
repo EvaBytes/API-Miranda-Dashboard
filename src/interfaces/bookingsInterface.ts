@@ -1,21 +1,19 @@
-import { Document } from 'mongoose';
-
-export interface Guest extends Document {
+export interface Guest{
     fullName: string;
     reservationNumber: string;
     image: string;
 }
 
-export interface BookingDocument extends Document {
+export interface Booking {
     photo: string;
     roomPhoto: string | string[];
     roomNumber: string;
     roomType: "Single Bed" | "Double Bed" | "Double Bed Superior" | "Suite";
     facilities: string | string[];
-    rate: string;
-    offerPrice?: string;
+    rate: string;  
+    offerPrice?: string;  
     status: "Check-In" | "Check-Out" | "In Progress";
-    guest: Guest;
+    guest: Guest;  
     orderDate: string;
     checkIn: string;
     checkOut: string;

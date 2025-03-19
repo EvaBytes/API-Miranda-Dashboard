@@ -1,78 +1,78 @@
-import mongoose from 'mongoose';
-import { RoomDocument } from '../interfaces/roomsInterface'; 
+import { sequelize } from "../database/db";
+import { Model, DataTypes } from "sequelize";
+import { Room } from "../interfaces/roomsInterface";
 
-const RoomSchema = new mongoose.Schema({
+class RoomModel extends Model<Room> implements Room {
+    public id!: number;
+    public roomPhoto!: string;
+    public roomNumber!: string;
+    public roomType!: "Single Bed" | "Double Bed" | "Double Bed Superior" | "Suite";
+    public facilities!: string;  
+    public rate!: string;
+    public offerPrice?: string | null;
+    public status!: "Available" | "Booked";
+    public guest?: string | null;  
+    public orderDate?: string;  
+    public checkIn?: string;    
+    public checkOut?: string;   
+}
+
+RoomModel.init({
+    id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+    },
     roomPhoto: {
-        type: String,
-        required: true,
-        description: 'URL of the room photo'
+        type: DataTypes.STRING(255),  
+        allowNull: true,
     },
     roomNumber: {
-        type: String,
-        required: true,
+        type: DataTypes.STRING(50),
+        allowNull: false,
         unique: true,
-        description: 'Unique identifier for the room'
     },
     roomType: {
-        type: String,
-        enum: ["Single Bed", "Double Bed","Double Bed Superior", "Suite"],
-        required: true,
-        description: 'Type of the room'
+        type: DataTypes.ENUM('Single Bed', 'Double Bed', 'Double Bed Superior', 'Suite'),
+        allowNull: false,
     },
     facilities: {
-        type: [String],
-        enum: ["Air conditioner","High speed WiFi","Breakfast","Kitchen","Cleaning","Shower","Grocery","Single bed","Shop near","Towels","24/7 Online Support","Strong locker","Smart Security","Expert Team"],
-        required: true,
-        description: 'List of facilities available in the room'
+        type: DataTypes.STRING, 
+        allowNull: true,
     },
     rate: {
-        type: String,
-        required: true,
-        description: 'Standard rate of the room'
+        type: DataTypes.STRING,  
+        allowNull: false,
     },
     offerPrice: {
-        type: String,
-        required: false,
-        description: 'Discounted price if any'
+        type: DataTypes.STRING,  
+        allowNull: true,
     },
     status: {
-        type: String,
-        enum: ['Available', 'Booked'],
-        required: true,
-        description: 'Current status of the room'
+        type: DataTypes.ENUM('Available', 'Booked'),
+        allowNull: false,
     },
     guest: {
-        fullName: {
-            type: String,
-            required: false,
-            description: 'Full name of the guest if booked'
-        },
-        reservationNumber: {
-            type: String,
-            required: false,
-            description: 'Reservation number of the guest'
-        },
-        image: {
-            type: String,
-            required: false,
-            description: 'Profile image of the guest'
-        }
+        type: DataTypes.STRING,  
+        allowNull: true,
     },
     orderDate: {
-        type: Date,
-        required: false,
-        description: 'Date and time of the room booking order'
+        type: DataTypes.STRING, 
+        allowNull: true,
     },
     checkIn: {
-        type: String,
-        required: false,
-        description: 'Check-in date and time'
+        type: DataTypes.STRING, 
+        allowNull: true,
     },
     checkOut: {
-        type: String,
-        required: false,
-        description: 'Check-out date and time'
+        type: DataTypes.STRING, 
+        allowNull: true,
     },
+}, {
+    sequelize, 
+    modelName: "Room", 
+    tableName: "Rooms", 
+    timestamps: false,
 });
 
-export const Room = mongoose.model<RoomDocument>('Room', RoomSchema);
+export { RoomModel };

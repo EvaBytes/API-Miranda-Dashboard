@@ -1,56 +1,73 @@
-import mongoose from 'mongoose';
-import { UserDocument } from '../interfaces/usersInterface'; 
+import { Model, DataTypes } from "sequelize";
+import { sequelize } from "../database/db";
+import { User } from "../interfaces/usersInterface";
 
-const UserSchema = new mongoose.Schema({
-    photo: {
-        type: String,
-        required: true,
-        description: 'URL of the users profile picture'
+class UserModel extends Model<User> implements User {
+    public id!: number;
+    public photo!: string;
+    public name!: string;
+    public employeeId!: string;
+    public email!: string;
+    public password!: string;
+    public startDate!: string;
+    public description!: string;
+    public contact!: string;
+    public status!: "ACTIVE" | "INACTIVE";
+}
+
+UserModel.init(
+    {
+        id: {
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
+            primaryKey: true,
+        },
+        photo: {
+            type: DataTypes.TEXT,
+            allowNull: true,
+        },
+        name: {
+            type: DataTypes.STRING(100),
+            allowNull: false,
+        },
+        employeeId: {
+            type: DataTypes.STRING(50),
+            allowNull: false,
+            unique: true,
+        },
+        email: {
+            type: DataTypes.STRING(255),
+            allowNull: false,
+            unique: true,
+        },
+        password: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+        },
+        startDate: {
+            type: DataTypes.STRING(50),
+            allowNull: true,
+        },
+        description: {
+            type: DataTypes.TEXT,
+            allowNull: true,
+        },
+        contact: {
+            type: DataTypes.STRING(20),
+            allowNull: true,
+        },
+        status: {
+            type: DataTypes.ENUM("ACTIVE", "INACTIVE"),
+            allowNull: false,
+            defaultValue: "ACTIVE",
+        },
     },
-    name: {
-        type: String,
-        required: true,
-        description: 'Full name of the user'
-    },
-    employeeId: {
-        type: String,
-        required: true,
-        description: 'Unique identifier for the user'
-    },
-    email: {
-        type: String,
-        required: true,
-        unique: true,
-        lowercase: true,
-        description: 'Email address of the user'
-    },
-    password: {
-        type: String,
-        required: true,
-        description: 'Users password'
-    },
-    startDate: {
-        type: String,
-        required: true,
-        description: 'Users start date in the company'
-    },
-    description: {
-        type: String,
-        required: true,
-        description: 'Job description of the user'
-    },
-    contact: {
-        type: String,
-        required: true,
-        description: 'Contact number of the user'
-    },
-    status: {
-        type: String,
-        enum: ['ACTIVE', 'INACTIVE'],
-        required: true,
-        description: 'Current status of the user'
+    {
+        sequelize,
+        modelName: "User",
+        tableName: "Users",
+        timestamps: false,
     }
-});
+);
 
-export const User = mongoose.model<UserDocument>('User', UserSchema);
-export {UserDocument};
+export {UserModel};

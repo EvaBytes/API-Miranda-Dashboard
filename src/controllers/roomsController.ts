@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { getAllRooms, getRoom, createRoom, updateRoom, deleteRoom } from "../services/roomsServices";
+import { fetchAllRooms, fetchRoomById, createRoom, updateRoom, deleteRoom } from "../services/roomsServices";
 import { asyncHandler } from "../utils/asyncHandler";
 
 export const roomRouter = express.Router();
@@ -79,7 +79,7 @@ export const roomRouter = express.Router();
  *                 $ref: '#/components/schemas/Room'
  */
 roomRouter.get('/', asyncHandler(async (req: Request, res: Response) => {
-    const rooms = await getAllRooms();
+    const rooms = await fetchAllRooms();
     res.status(200).json({ data: rooms });
 }));
 
@@ -107,7 +107,7 @@ roomRouter.get('/', asyncHandler(async (req: Request, res: Response) => {
  *         description: Room not found
  */
 roomRouter.get('/:roomNumber', asyncHandler(async (req: Request, res: Response) => {
-    const room = await getRoom(req.params.roomNumber);
+    const room = await fetchRoomById(req.params.roomNumber);
     if (room) {
         res.status(200).json({ data: room });
     } else {res.status(404).json({ error: 'Room not found' });}

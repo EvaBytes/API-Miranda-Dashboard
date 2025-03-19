@@ -1,26 +1,23 @@
-import mysql from "mysql2/promise";
+import { Sequelize } from 'sequelize';
 import * as dotenv from "dotenv";
 
 dotenv.config();
 
-const connectDB = async () => {
-    try {
-        const connection = await mysql.createPool({
+export const sequelize = new Sequelize ({
+
+            dialect: "mysql",
             host: process.env.DB_HOST,
-            user: process.env.DB_USER,
+            port: 3306,
+            username: process.env.DB_USER,
             password: process.env.DB_PASSWORD,
             database: process.env.DB_NAME,
-            waitForConnections: true,
-            connectionLimit: 10,
-            queueLimit: 0
+            logging: false,
         });
 
-        console.log("MySQL Database connected successfully!");
-        return connection;
-    } catch (error) {
-        console.error(" MySQL connection error:", error);
-        process.exit(1);
-    }
-};
-
-export { connectDB };
+        sequelize.authenticate()
+        .then(() => {
+        console.log('Conexión exitosa a la base de datos.');
+    })
+    .catch(err => { 
+        console.error('Error al conectar a la base de datos:', err); 
+});

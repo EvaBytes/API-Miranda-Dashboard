@@ -1,53 +1,62 @@
-import mongoose from 'mongoose';
+import { sequelize } from "../database/db";
+import { Model, DataTypes } from "sequelize";
+import { Message } from "../interfaces/contactInterface";
 
-const ContactSchema = new mongoose.Schema({
+class MessageModel extends Model<Message> implements Message {
+    public messageId!: number;
+    public photo!: string;
+    public date!: string;
+    public fullName!: string;
+    public email!: string;
+    public phone!: string;
+    public subject!: string;
+    public comment!: string;
+    public status!: "unread" | "read";
+}
+
+MessageModel.init({
+    messageId: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+    },
     photo: {
-        type: String,
-        required: true,
-        description: 'URL of the contacts profile photo'
+        type: DataTypes.STRING(255),
+        allowNull: false,
     },
     date: {
-        type: String,
-        required: true,
-        description: 'Date and time of the message'
-    },
-    messageId: {
-        type: String,
-        required: true,
-        unique: true,
-        description: 'Unique identifier for the message'
+        type: DataTypes.DATE,  
+        allowNull: false,
     },
     fullName: {
-        type: String,
-        required: true,
-        description: 'Full name of the contact'
+        type: DataTypes.STRING(75),
+        allowNull: false,
     },
     email: {
-        type: String,
-        required: true,
-        description: 'Email address of the contact'
+        type: DataTypes.STRING(100),
+        allowNull: false,
     },
     phone: {
-        type: String,
-        required: true,
-        description: 'Phone number of the contact'
+        type: DataTypes.STRING(15),  
+        allowNull: false,
     },
     subject: {
-        type: String,
-        required: true,
-        description: 'Subject of the message'
+        type: DataTypes.STRING(100),
+        allowNull: false,
     },
     comment: {
-        type: String,
-        required: true,
-        description: 'Content of the message or comment'
+        type: DataTypes.STRING,
+        allowNull: false,
     },
     status: {
-        type: String,
-        enum: ['unread', 'read'],
-        required: true,
-        description: 'Current status of the message'
-    }
+        type: DataTypes.ENUM('unread', 'read'),
+        allowNull: false,
+    },
+}, {
+    sequelize,
+    modelName: "Message",
+    tableName: "Contact",  
+    timestamps: false,
 });
 
-export const Contact = mongoose.model('Contact', ContactSchema);
+export { MessageModel };

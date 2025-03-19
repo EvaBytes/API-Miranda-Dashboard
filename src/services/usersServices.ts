@@ -1,50 +1,68 @@
-import bcrypt from 'bcryptjs';
-import { User } from '../models/usersModels';
-import { UserDocument } from '../interfaces/usersInterface';
+import bcrypt from "bcryptjs";
+import {UserModel} from "../models/usersModels";
+import { User } from "../interfaces/usersInterface";
 
-export class UsersService {
-    static async fetchAll(): Promise<UserDocument[]> {
-        return await User.find(); 
-    }
-
-    static async fetchById(employeeId: string): Promise<UserDocument | null> {
-        return await User.findOne({ employeeId });
-    }
-
-    static async create(userData: UserDocument): Promise<UserDocument> {
+export class UserService {
+    async fetchAll(): Promise<User[]> {
         try {
-            const hashedPassword = bcrypt.hashSync(userData.password, 15); 
-            const newUser = new User({
-                ...userData,
-                password: hashedPassword
+            return await UserModel.findAll({
+                attributes: ["id", "photo", "name", "employeeId", "email", "startDate", "description", "contact", "status"],
             });
-
-            return await newUser.save();
-        } catch (error: unknown) {
-            if (error instanceof Error) {
-                throw new Error('Error creating user: ' + error.message);
-            } else {
-                throw new Error('Unknown error occurred during user creation');
-            }
+        } catch (error) {
+            throw new Error("Error fetching users");
         }
     }
 
-    static async update(employeeId: string, userData: Partial<UserDocument>): Promise<UserDocument | null> {
-        return await User.findOneAndUpdate(
-            { employeeId },
-            userData,
-            { new: true }
-        ); 
+    async fetchById(employeeId: string): Promise<User | null> {
+        try {
+            return await UserModel.findOne({
+                where: { employeeId },
+                attributes: ["id", "photo", "name", "employeeId", "email", "startDate", "description", "contact", "status"],
+            });
+        } catch (error) {
+            throw new Error("Error fetching user by id");
+        }
     }
 
-    static async delete(employeeId: string): Promise<boolean> {
-        const result = await User.deleteOne({ employeeId });
-        return result.deletedCount > 0;
+    async create(userData: User): Promise<User> {
+        try {
+            const hashedPassword = bcrypt.hashSync(userData.password, 15);
+            const newUser = await UserModel.create({ ...userData, password: hashedPassword });
+            return newUser;
+        } catch (error) {
+            throw new Error("Error creating user");
+        }
+    }
+
+    async update(employeeId: string, userData: Partial<User>): Promise<User | null> {
+        try {
+            if (userData.password) {
+                userData.password = bcrypt.hashSync(userData.password, 15);
+            }
+
+            const [updated] = await UserModel.update(userData, { where: { employeeId }, returning: true });
+
+            if (updated === 0) return null;
+
+            return await this.fetchById(employeeId);
+        } catch (error) {
+            throw new Error("Error updating user");
+        }
+    }
+
+    async delete(employeeId: string): Promise<boolean> {
+        try {
+            const deletedRows = await UserModel.destroy({ where: { employeeId } });
+            return deletedRows > 0;
+        } catch (error) {
+            throw new Error("Error deleting user");
+        }
     }
 }
 
-export const getAllUsers = UsersService.fetchAll;
-export const getUser = UsersService.fetchById;
-export const createUser = UsersService.create;
-export const updateUser = UsersService.update;
-export const deleteUser = UsersService.delete;
+export const userService = new UserService();
+export const fetchAllUsers = async () => userService.fetchAll();
+export const fetchUserById = async (employeeId: string) => userService.fetchById(employeeId);
+export const createUser = async (userData: User) => userService.create(userData);
+export const updateUser = async (employeeId: string, userData: Partial<User>) => userService.update(employeeId, userData);
+export const deleteUser = async (employeeId: string) => userService.delete(employeeId);

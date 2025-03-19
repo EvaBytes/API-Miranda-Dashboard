@@ -1,36 +1,66 @@
-import { Booking } from '../models/bookingsModels'; 
-import { BookingDocument } from '../interfaces/bookingsInterface'; 
+import { BookingModel } from "../models/bookingsModels";  
+import { Booking } from "../interfaces/bookingsInterface";  
 
 export class BookingsService {
-    static async fetchAll(): Promise<BookingDocument[]> {
-        return await Booking.find(); 
+
+    async fetchAll(): Promise<Booking[]> {
+        try {
+            const bookings = await BookingModel.findAll();
+            return bookings.map(booking => booking.toJSON() as Booking);  
+        } catch (error) {
+            throw new Error('Error fetching bookings');
+        }
     }
 
-    static async fetchById(reservationNumber: string): Promise<BookingDocument | null> {
-        return await Booking.findOne({ 'guest.reservationNumber': reservationNumber }); 
+    async fetchById(bookingId: string): Promise<Booking | null> {
+        try {
+            const booking = await BookingModel.findByPk(bookingId);
+            return booking ? booking.toJSON() as Booking : null;  
+        } catch (error) {
+            throw new Error('Error fetching booking by id');
+        }
     }
 
-    static async create(bookingData: BookingDocument): Promise<BookingDocument> {
-        const newBooking = new Booking(bookingData);
-        return await newBooking.save(); 
+    async create(bookingData: Partial<Booking>): Promise<Booking> {
+        try {
+            const newBooking = await BookingModel.create(bookingData);
+            return newBooking.toJSON() as Booking;  
+        } catch (error) {
+            throw new Error('Error creating booking');
+        }
     }
 
-    static async update(reservationNumber: string, bookingData: Partial<BookingDocument>): Promise<BookingDocument | null> {
-        return await Booking.findOneAndUpdate(
-            { 'guest.reservationNumber': reservationNumber }, 
-            bookingData, 
-            { new: true } 
-        ); 
+    async update(bookingId: string, bookingData: Partial<Booking>): Promise<Booking | null> {
+        try {
+            const [affectedRows, updatedBookings] = await BookingModel.update(bookingData, {
+                where: { id: bookingId },
+                returning: true,
+            });
+
+            if (affectedRows === 0) return null;  
+            return updatedBookings[0].toJSON() as Booking;  
+        } catch (error) {
+            throw new Error('Error updating booking');
+        }
     }
 
-    static async delete(reservationNumber: string): Promise<boolean> {
-        const result = await Booking.deleteOne({ 'guest.reservationNumber': reservationNumber }); 
-        return result.deletedCount > 0; 
+    async delete(bookingId: string): Promise<boolean> {
+        try {
+            const deletedRows = await BookingModel.destroy({
+                where: { id: bookingId }
+            });
+
+            return deletedRows > 0;  
+        } catch (error) {
+            throw new Error('Error deleting booking');
+        }
     }
 }
 
-export const getAllBookings = BookingsService.fetchAll;
-export const getBooking = BookingsService.fetchById;
-export const createBooking = BookingsService.create;
-export const updateBooking = BookingsService.update;
-export const deleteBooking = BookingsService.delete;
+export const bookingsService = new BookingsService();
+
+export const fetchAllBookings = async () => bookingsService.fetchAll();
+export const fetchBookingById = async (bookingId: string) => bookingsService.fetchById(bookingId);
+export const createBooking = async (bookingData: Partial<Booking>) => bookingsService.create(bookingData);
+export const updateBooking = async (bookingId: string, bookingData: Partial<Booking>) => bookingsService.update(bookingId, bookingData);
+export const deleteBooking = async (bookingId: string) => bookingsService.delete(bookingId);

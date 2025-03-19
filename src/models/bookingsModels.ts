@@ -1,89 +1,88 @@
-import mongoose from 'mongoose';
-import { BookingDocument } from '../interfaces/bookingsInterface'; 
+import { Model, DataTypes } from 'sequelize';
+import { sequelize } from '../database/db'; 
+import { RoomModel } from './roomsModels'; 
 
-const BookingSchema = new mongoose.Schema({
-    photo: {
-        type: String,
-        required: true,
-        description: 'URL of the main booking photo'
-    },
-    roomPhoto: {
-        type: mongoose.Schema.Types.Mixed,
-        required: true,
-        description: 'Array of URLs of the room photos'
+class BookingModel extends Model {
+  public id!: number;
+  public roomNumber!: number;
+  public guest!: object;
+  public rate!: number;
+  public offerPrice!: number | null;
+  public status!: string;
+  public orderDate!: Date;
+  public checkIn!: Date;
+  public checkOut!: Date;
+  public specialRequest!: string | null;
+}
+
+BookingModel.init(
+  {
+    id: {
+      type: DataTypes.BIGINT.UNSIGNED,
+      primaryKey: true,
+      autoIncrement: true,
     },
     roomNumber: {
-        type: String,
-        required: true,
-        unique: true,
-        description: 'Unique identifier for the booked room'
-    },
-    roomType: {
-        type: String,
-        enum: ["Single Bed", "Double Bed","Double Bed Superior", "Suite"],
-        required: true,
-        description: 'Type of the booked room'
-    },
-    facilities: {
-        type: [String],
-        enum: ["Air conditioner","High speed WiFi","Breakfast","Kitchen","Cleaning","Shower","Grocery","Single bed","Shop near","Towels","24/7 Online Support","Strong locker","Smart Security","Expert Team"],
-        required: true,
-        description: 'List of facilities available in the room'
-    },
-    rate: {
-        type: String,
-        required: true,
-        description: 'Standard rate of the room'
-    },
-    offerPrice: {
-        type: String,
-        required: false,
-        description: 'Discounted price if any'
-    },
-    status: {
-        type: String,
-        enum: ['Check-In', 'Check-Out', 'In Progress'],
-        required: true,
-        description: 'Current booking status'
+      type: DataTypes.BIGINT.UNSIGNED,
+      allowNull: false,
+      references: {
+        model: RoomModel,
+        key: 'id',
+      },
     },
     guest: {
-        fullName: {
-            type: String,
-            required: true,
-            description: 'Full name of the guest who made the booking'
-        },
-        reservationNumber: {
-            type: String,
-            required: true,
-            unique: true,
-            description: 'Reservation number of the booking'
-        },
-        image: {
-            type: String,
-            required: true,
-            description: 'Profile image of the guest'
-        }
+      type: DataTypes.JSONB, 
+      allowNull: false,
+    },
+    rate: {
+      type: DataTypes.DECIMAL(6, 2),
+      allowNull: false,
+      validate: {
+        min: 0,
+        max: 1000,
+      },
+    },
+    offerPrice: {
+      type: DataTypes.DECIMAL(6, 2),
+      allowNull: true,
+      validate: {
+        min: 0,
+        max: 1000,
+      },
+    },
+    status: {
+      type: DataTypes.ENUM('In-Progress', 'Check-in', 'Check-out'),
+      allowNull: false,
+      defaultValue: 'In-Progress',
     },
     orderDate: {
-        type: String,
-        required: true,
-        description: 'Date and time when the booking was placed'
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
     },
     checkIn: {
-        type: String,
-        required: true,
-        description: 'Check-in date of the booking'
+      type: DataTypes.DATEONLY,
+      allowNull: false,
     },
     checkOut: {
-        type: String,
-        required: true,
-        description: 'Check-out date of the booking'
+      type: DataTypes.DATEONLY,
+      allowNull: false,
     },
     specialRequest: {
-        type: String,
-        required: false,
-        description: 'Special requests made by the guest'
-    }
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+  },
+  {
+    sequelize,
+    modelName: 'Booking',
+    tableName: 'Bookings',
+    timestamps: false, 
+  }
+);
+
+BookingModel.belongsTo(RoomModel, {
+  foreignKey: 'roomNumber',
+  onDelete: 'CASCADE',
 });
 
-export const Booking = mongoose.model<BookingDocument>('Booking', BookingSchema);
+export { BookingModel };

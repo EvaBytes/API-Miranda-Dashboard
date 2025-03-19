@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import {getAllBookings,getBooking,createBooking,updateBooking,deleteBooking} from "../services/bookingsServices";
+import { fetchAllBookings, fetchBookingById, createBooking, updateBooking, deleteBooking } from "../services/bookingsServices";
 import { asyncHandler } from "../utils/asyncHandler";
 import { BookingValidator } from "../validators/bookingsValidator";
 
@@ -80,7 +80,7 @@ const validator = new BookingValidator();
 bookingRouter.get(
   "/",
   asyncHandler(async (req: Request, res: Response) => {
-    const bookings = await getAllBookings();
+    const bookings = await fetchAllBookings();
     res.status(200).json({ data: bookings });
   })
 );
@@ -112,7 +112,7 @@ bookingRouter.get(
   "/:reservationNumber",
   asyncHandler(async (req: Request, res: Response) => {
     const reservationNumber = req.params.reservationNumber;
-    const booking = await getBooking(reservationNumber);
+    const booking = await fetchBookingById(reservationNumber);
 
     if (booking) {
       res.status(200).json({ data: booking });
