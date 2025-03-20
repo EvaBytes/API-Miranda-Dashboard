@@ -20,7 +20,7 @@ const port = 3001;
 app.use(express.json());
 
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: "http://localhost:5174",
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
@@ -36,14 +36,14 @@ const runServer = async () => {
       console.log(`Server running at http://localhost:${port}`);
     });
   } catch (error) {
-    console.error("Error al conectar a la base de datos:", error);
+    console.error("Error connecting to the database");
     process.exit(1);
   }
 };
 process.on("SIGINT", async () => {
   try {
     await sequelize.close();
-    console.log("Conexión a la base de datos cerrada.");
+    console.log("Connection to the database closed.");
     process.exit(0);
   } catch (error) {
     console.error("Failed to connect to the database:", error);
