@@ -35,16 +35,19 @@ export class RoomsService {
                 throw new Error(`Room number "${roomData.roomNumber}" already exists`);
             }
 
-            const finalRoomData: Room = {
-                ...roomData,
+            const newRoom = await RoomModel.create({
+                roomNumber: roomData.roomNumber,
                 roomPhoto: roomData.roomPhoto ?? null,
+                roomType: roomData.roomType,
+                facilities: roomData.facilities,
+                rate: roomData.rate,
+                offerPrice: roomData.offerPrice ?? null,
                 status: roomData.status ?? "Available",
-            };
+            });
 
-            const newRoom = await RoomModel.create(finalRoomData);
             return newRoom.toJSON() as Room;
         } catch (error) {
-            throw new Error('Error creating room');
+            throw new Error('Error creating room: ' + error);
         }
     }
 
@@ -53,12 +56,12 @@ export class RoomsService {
             const [affectedRows, updatedRooms] = await RoomModel.update(roomData, {
                 where: { id: roomId },
                 returning: true,
-            });
+            }) as [number, RoomModel[]];
 
-            if (affectedRows === 0) return null;  
-            return updatedRooms[0].toJSON() as Room; 
+            if (affectedRows === 0 || !updatedRooms[0]) return null;  
+            return updatedRooms[0].toJSON() as Room;
         } catch (error) {
-            throw new Error('Error updating room');
+            throw new Error('Error updating room: ' + error);
         }
     }
 
@@ -70,7 +73,7 @@ export class RoomsService {
 
             return deletedRows > 0; 
         } catch (error) {
-            throw new Error('Error deleting room');
+            throw new Error('Error deleting room: ' + error);
         }
     }
 }

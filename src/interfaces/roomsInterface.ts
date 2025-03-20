@@ -7,8 +7,4 @@ export interface Room {
   rate: string;                       
   offerPrice?: string | null;               
   status: "Available" | "Booked";     
-  guest?: string | null;  
-  orderDate?: string;                 
-  checkIn?: string;                   
-  checkOut?: string;                  
 }
