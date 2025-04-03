@@ -20,7 +20,7 @@ const port = 3001;
 app.use(express.json());
 
 app.use(cors({
-  origin: "http://localhost:5174",
+  origin: "http://localhost:5173",
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
@@ -52,21 +52,6 @@ process.on("SIGINT", async () => {
 });
 runServer();
 export const handler = serverless(app);
-/*let db: any;
-connectDB().then((connection) => {
-  db = connection;
-  console.log("Database connected, starting server...");
-  app.listen(port, () => {
-      console.log(`Server running at http://localhost:${port}`);
-  });
-}).catch((error) => {
-  console.error("Failed to connect to the database:", error);
-});
-
-app.use((req: Request, res: Response, next) => {
-  req.db = db;
-  next();
-});*/
 
 app.use("/api/v1/login", authRouter);
 app.use("/api/v1/bookings", verifyJWTMiddleware, bookingRouter);
@@ -96,7 +81,7 @@ const swaggerOptions = {
       version: "1.0.0",
       description: "API documentation for Miranda Hotel",
     },
-    servers: [{ url: "http://localhost:3001" }],
+    servers: [{ url: "http://localhost:3001/doc" }],
   },
   apis: ["./src/controllers/*.ts"], 
 };
